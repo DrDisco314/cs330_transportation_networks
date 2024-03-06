@@ -86,13 +86,16 @@ class Graph:
         """
 
         """Citation: https://networkx.org/
-        Package for visualizing a weighted graph
+            Author: NetworkX developers
+        Package for visualizing a weighted graph to help visualize network.
         """
         G = nx.Graph()
+        # Add our weighted graph to the nx Graph
         for node, neighbors in self.graph.items():
             for neighbor, weight in neighbors.items():
                 G.add_edge(node, neighbor, weight=weight)
 
+        # Use networkX methods to add attributes to graph.
         pos = nx.spring_layout(G)
         nx.draw_networkx_nodes(G, pos, node_size=700)
         nx.draw_networkx_edges(G, pos, width=2)

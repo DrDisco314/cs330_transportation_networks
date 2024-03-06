@@ -62,11 +62,12 @@ class TestGraphAndDijkstra(unittest.TestCase):
         end_list = [25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35]
         for start_node in start_list:
             for end_node in end_list:
-                self.myDijkstra.compute_shortest_paths(start_node)
+
                 path_info = find_path(self.dijkstar_graph, start_node, end_node)
                 self.assertIsNotNone(path_info.nodes)
                 self.assertEqual(
-                    self.myDijkstra.get_shortest_path(end_node), path_info.nodes
+                    self.myDijkstra.find_shortest_path(start_node, end_node),
+                    path_info.nodes,
                 )
 
 

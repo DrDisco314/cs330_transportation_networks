@@ -13,17 +13,15 @@ from Dijkstra import Dijkstra
 
 def main():
     graph_file = "road-chesapeake.mtx"
-    start_node = 1
-    end_node = 32
+    start_node = 8
+    end_node = 25
 
     graph = Graph()
     graph.read_from_mtx_file(graph_file)
     graph.visualize_graph()
 
     dijkstra = Dijkstra(graph)
-    dijkstra.compute_shortest_paths(start_node)
-
-    shortest_path = dijkstra.get_shortest_path(end_node)
+    shortest_path = dijkstra.find_shortest_path(start_node, end_node)
     print(f"Shortest path from {start_node} to {end_node}: {shortest_path}")
 
 

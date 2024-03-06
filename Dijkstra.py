@@ -33,6 +33,8 @@ class Dijkstra:
         Return:
             None
         """
+
+        # Initialize parameters
         self.distances = {node: float("infinity") for node in self.graph.graph}
         self.distances[start_node] = 0
         self.predecessors = {node: None for node in self.graph.graph}
@@ -45,7 +47,7 @@ class Dijkstra:
             Inspiration for using a min-heap with with Dijkstra algorithm.
 
             Citation: https://docs.python.org/3/library/heapq.html
-            Heap Queue alogirthm sets up a binary tree with parents less than or equal to children
+            Heap Queue keeps track of most recently visted nodes on top of stack.
             """
             current_distance, current_node = heapq.heappop(priority_queue)
             # If shorter path already found -> continue
@@ -72,3 +74,16 @@ class Dijkstra:
             path.append(current)
             current = self.predecessors[current]
         return path[::-1]
+
+    def find_shortest_path(self, start_node: int, end_node: int) -> list[int]:
+        """
+        Function that uses helper functions compute_shortest_paths and get_shortest_path to
+        find the shortest path between start node and end node.
+        Input:
+            start_node (int) : Integer representing the starting node.
+            end_node (int) : Integer representing the starting node.
+        Return:
+             List of shortest path from start node to end node.
+        """
+        self.compute_shortest_paths(start_node)
+        return self.get_shortest_path(end_node)
