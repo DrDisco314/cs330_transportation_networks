@@ -1,3 +1,13 @@
+"""
+    File:        graph.py
+    Author:      Alex Axton, Nathanial Field, Michael Scoleri
+    Course:      CS 330 - Algorithms
+    Semester:    Spring 2024
+    Assignment:  Term Project: Transportation networks
+    Description: Implements the Graph class to create a data structure from a file. The data structure
+                can be used with any shortest path algorithm.
+"""
+
 import networkx as nx
 import matplotlib.pyplot as plt
 

@@ -1,3 +1,13 @@
+"""
+    File:        test.py
+    Author:      Alex Axton, Nathanial Field, Michael Scoleri
+    Course:      CS 330 - Algorithms
+    Semester:    Spring 2024
+    Assignment:  Term Project: Transportation networks
+    Description: Implements the unittest and dijkstrar package to run unit tests on the graph
+                and dijkstra implementation. 
+"""
+
 import unittest
 from dijkstar import Graph as DijkstarGraph, find_path
 from graph import Graph as myGraph
@@ -6,6 +16,13 @@ from Dijkstra import Dijkstra
 
 class TestGraphAndDijkstra(unittest.TestCase):
     def setUp(self):
+        """
+        Initialize the testing class.
+        Input:
+            None
+        Return:
+            None
+        """
         graph_file = "road-chesapeake.mtx"
         self.graph = myGraph()
         self.graph.read_from_mtx_file(graph_file)
@@ -22,13 +39,25 @@ class TestGraphAndDijkstra(unittest.TestCase):
                 self.dijkstar_graph.add_edge(node, neighbor, weight)
 
     def test_graph_structure(self):
-        # Test basic graph structure assertions
+        """
+        Test the graph class to ensure functioning as expected.
+        Input:
+            None
+        Output:
+            None
+        """
         self.assertIn(32, self.graph.graph)
         self.assertIn(12, self.graph.graph[1])
         self.assertEqual(self.graph.graph[1][23], 22)
 
     def test_shortest_path(self):
-        # Test to make sure existing Dijkstra is finding the same path for 110 different paths.
+        """
+        Test to make sure existing Dijkstra is finding the same path for 110 different paths using Dijkstrar package.
+        Input:
+            None
+        Output:
+            None
+        """
         start_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         end_list = [25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35]
         for start_node in start_list:

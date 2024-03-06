@@ -4,8 +4,7 @@
     Course:      CS 330 - Algorithms
     Semester:    Spring 2024
     Assignment:  Term Project: Transportation networks
-    Description: Implements a brute force solution to the
-      transportation network routing problem using Dijkstra's algorithm.
+    Description: Utilizes helper classes to execute Dijkstra Algorithm.
 """
 
 from graph import Graph

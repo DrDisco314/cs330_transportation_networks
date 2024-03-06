@@ -1,3 +1,13 @@
+"""
+    File:        Dijkstra.py
+    Author:      Alex Axton, Nathanial Field, Michael Scoleri
+    Course:      CS 330 - Algorithms
+    Semester:    Spring 2024
+    Assignment:  Term Project: Transportation networks
+    Description: Implements a brute force solution to the
+      transportation network routing problem using Dijkstra's algorithm.
+"""
+
 import heapq
 
 
