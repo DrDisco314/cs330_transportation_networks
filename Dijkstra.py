@@ -12,13 +12,18 @@ class Dijkstra:
         self.distances[start_node] = 0
         self.predecessors = {node: None for node in self.graph.graph}
 
+        # Initialize the min heap
         priority_queue = [(0, start_node)]
         while priority_queue:
             """
+            Citation: https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-using-priority_queue-stl/
+            Inspiration for using a min-heap with with Dijkstra algorithm
+
             Citation: https://docs.python.org/3/library/heapq.html
             Heap Queue alogirthm sets up a binary tree with parents less than or equal to children
             """
             current_distance, current_node = heapq.heappop(priority_queue)
+            # If shorter path already found -> continue
             if current_distance > self.distances[current_node]:
                 continue
             for neighbor, weight in self.graph.get_neighbors(current_node).items():
