@@ -1,6 +1,3 @@
-# Assuming you have dijkstar installed
-# pip install dijkstar
-
 import unittest
 from dijkstar import Graph as DijkstarGraph, find_path
 from graph import Graph
