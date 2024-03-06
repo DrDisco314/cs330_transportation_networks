@@ -61,8 +61,7 @@ class TestGraphAndDijkstra(unittest.TestCase):
         start_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         end_list = [25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39]
         for start_node in start_list:
-            for end_node in start_list:
-
+            for end_node in end_list:
                 path_info = find_path(self.dijkstar_graph, start_node, end_node)
                 self.assertIsNotNone(path_info.nodes)
                 self.assertEqual(
