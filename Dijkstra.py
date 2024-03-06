@@ -14,6 +14,10 @@ class Dijkstra:
 
         priority_queue = [(0, start_node)]
         while priority_queue:
+            """
+            Citation: https://docs.python.org/3/library/heapq.html
+            Heap Queue alogirthm sets up a binary tree with parents less than or equal to children
+            """
             current_distance, current_node = heapq.heappop(priority_queue)
             if current_distance > self.distances[current_node]:
                 continue
