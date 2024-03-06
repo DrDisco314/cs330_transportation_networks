@@ -12,6 +12,10 @@ class TestGraphAndDijkstra(unittest.TestCase):
         self.myDijkstra = Dijkstra(self.graph)
 
         # Convert to Dijkstar graph
+        """
+        Citation: https://pypi.org/project/Dijkstar/
+        Pre-existing Dijksta Algorithm to make sure our implentation is working the same.
+        """
         self.dijkstar_graph = DijkstarGraph()
         for node, neighbors in self.graph.graph.items():
             for neighbor, weight in neighbors.items():
