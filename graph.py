@@ -4,9 +4,25 @@ import matplotlib.pyplot as plt
 
 class Graph:
     def __init__(self):
+        """
+        Initialize the Graph Class.
+        Input:
+            None
+        Return:
+            None
+        """
         self.graph = {}
 
-    def add_edge(self, node1, node2, weight):
+    def add_edge(self, node1: int, node2: int, weight: int):
+        """
+        Adds the edge from one node to another.
+        Input:
+            Node1 (int) : Integer representing first node.
+            Node2 (int) : Intger representing second node
+            weight (int) : Integer representing weight of edge from 2 nodes.
+        Return:
+            None
+        """
         if node1 not in self.graph:
             self.graph[node1] = {}
         if node2 not in self.graph:
@@ -14,7 +30,14 @@ class Graph:
         self.graph[node1][node2] = weight
         self.graph[node2][node1] = weight
 
-    def read_from_mtx_file(self, filename):
+    def read_from_mtx_file(self, filename: str):
+        """
+        Reads in a file in the form of matrix where nodes are in the same line. Weight is the abs(node1-node2)
+        Input:
+            filename (str) : Filename as a string
+        Return:
+            None
+        """
         try:
             with open(filename, "r") as file:
                 for line in file:
@@ -31,10 +54,25 @@ class Graph:
         except Exception as e:
             print(f"An error occurred: {e}")
 
-    def get_neighbors(self, node):
+    def get_neighbors(self, node: int) -> dict:
+        """
+        Returns the neighbors of a given node. Will return an empty dictionary if no neioghbors exists.
+        Input:
+            node (int) : Integer representing node to find neighbors for.
+        Return:
+            Dictionary with all neighbors as key and weights as value
+        """
         return self.graph.get(node, {})
 
     def visualize_graph(self):
+        """
+        Visualize the current graph using the NetworkX package.
+        Input:
+            None
+        Return:
+            None
+        """
+
         """Citation: https://networkx.org/
         Package for visualizing a weighted graph
         """
