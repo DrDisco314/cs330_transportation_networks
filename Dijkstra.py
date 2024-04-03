@@ -44,7 +44,7 @@ class Dijkstra:
         while priority_queue:
             """
             Citation: https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-using-priority_queue-stl/
-            Inspiration for using a min-heap with with Dijkstra algorithm.
+            Inspiration for using a priority queue with with Dijkstra algorithm.
 
             Citation: https://docs.python.org/3/library/heapq.html
             Heap Queue keeps track of most recently visted nodes on top of stack.

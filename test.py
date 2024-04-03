@@ -12,6 +12,7 @@ import unittest
 from dijkstar import Graph as DijkstarGraph, find_path
 from graph import Graph as myGraph
 from Dijkstra import Dijkstra
+import time
 
 
 class TestGraphAndDijkstra(unittest.TestCase):
@@ -68,6 +69,39 @@ class TestGraphAndDijkstra(unittest.TestCase):
                     self.myDijkstra.find_shortest_path(start_node, end_node),
                     path_info.nodes,
                 )
+
+    def test_dijkstra_time(self):
+        """
+        Tests the performance of the Dijkstra algorithm in terms of execution time.
+        Input:
+            None
+        Output:
+            Prints the performance metrics in a friendly manner.
+        """
+        nodes_to_test = [2, 4, 8, 16, 32]
+        start_node = 1
+        print("{:<15} {:<15} {:<10}".format("Nodes", "Nodes Visited", "Time (ms)"))
+
+        for max_nodes in nodes_to_test:
+            nodes_visited = 2
+            while nodes_visited <= max_nodes:
+                end_nodes = list(range(2, nodes_visited + 1))
+                start_time = time.time()
+                for end_node in end_nodes:
+                    self.myDijkstra.find_shortest_path(start_node, end_node)
+                end_time = time.time()
+
+                time_taken = (end_time - start_time) * 1000  # Time in milliseconds
+                print(
+                    "{:<15} {:<15} {:<10.2f}".format(
+                        max_nodes, nodes_visited, time_taken
+                    )
+                )
+
+                if nodes_visited == max_nodes:
+                    break
+                nodes_visited *= 2
+            print()
 
 
 if __name__ == "__main__":
