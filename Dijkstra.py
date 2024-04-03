@@ -87,7 +87,3 @@ class Dijkstra:
         """
         self.compute_shortest_paths(start_node)
         return self.get_shortest_path(end_node)
-
-
-# My github is broken
-# I am so mad
