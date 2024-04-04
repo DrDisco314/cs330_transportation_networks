@@ -10,8 +10,8 @@
 
 import unittest
 from dijkstar import Graph as DijkstarGraph, find_path
-from graph import Graph as myGraph
-from Dijkstra import Dijkstra
+from src.graph import Graph as myGraph
+from Algorithms.Dijkstra import Dijkstra
 import time
 
 
@@ -24,7 +24,7 @@ class TestGraphAndDijkstra(unittest.TestCase):
         Return:
             None
         """
-        graph_file = "road-chesapeake.mtx"
+        graph_file = "Data/road-chesapeake.mtx"
         self.graph = myGraph()
         self.graph.read_from_mtx_file(graph_file)
         self.myDijkstra = Dijkstra(self.graph)

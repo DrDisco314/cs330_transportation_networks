@@ -7,8 +7,8 @@
     Description: Utilizes helper classes to execute Dijkstra Algorithm.
 """
 
-from graph import Graph
-from Dijkstra import Dijkstra
+from src.graph import Graph
+from Algorithms.Dijkstra import Dijkstra
 
 
 def main():
