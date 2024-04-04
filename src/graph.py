@@ -24,7 +24,7 @@ class Graph:
         """
         self.graph = {}
 
-    def add_edge(self, node1: int, node2: int, weight: int):
+    def add_edge(self, node1: int, node2: int, weight: float):
         """
         Adds the edge from one node to another.
         Input:
@@ -68,9 +68,23 @@ class Graph:
             print(f"An error occurred: {e}")
 
     def read_from_csv_file(self, filename: str):
+        """
+        Reads in a file in the form of csv where nodes are in the same line.
+        Input:
+            filename (str) : Filename as a string
+        Return:
+            None
+        """
+        ##XCoord,YCoord,START_NODE,END_NODE,EDGE,LENGTH
         try:
             with open(filename, newline="") as file:
                 reader = csv.DictReader(file)
+                for row in reader:
+                    self.add_edge(
+                        int(row["START_NODE"]),
+                        int(row["END_NODE"]),
+                        float(row["LENGTH"]),
+                    )
         except FileNotFoundError:
             print(f"Error: File '{filename}' not found.")
         except Exception as e:
@@ -85,6 +99,16 @@ class Graph:
             Dictionary with all neighbors as key and weights as value
         """
         return self.graph.get(node, {})
+
+    def return_graph(self) -> dict:
+        """
+        Return the graph.
+        Input:
+            None
+        Return:
+            Dictionary of graph
+        """
+        return self.graph
 
     def visualize_graph(self):
         """

@@ -73,6 +73,8 @@ class Dijkstra:
         while current is not None:
             path.append(current)
             current = self.predecessors[current]
+        if len(path) == 1:
+            return None
         return path[::-1]
 
     def find_shortest_path(self, start_node: int, end_node: int) -> list[int]:

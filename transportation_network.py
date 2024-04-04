@@ -12,7 +12,7 @@ from Algorithms.Dijkstra import Dijkstra
 
 
 def main():
-    graph_file = "road-chesapeake.mtx"
+    graph_file = "Data/road-chesapeake.mtx"
     start_node = 8
     end_node = 25
 

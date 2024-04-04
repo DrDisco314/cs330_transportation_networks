@@ -9,7 +9,7 @@
 """
 
 import unittest
-from dijkstar import Graph as DijkstarGraph, find_path
+from dijkstar import Graph as DijkstarGraph, find_path, NoPathError
 from src.graph import Graph as myGraph
 from Algorithms.Dijkstra import Dijkstra
 import time
@@ -24,9 +24,9 @@ class TestGraphAndDijkstra(unittest.TestCase):
         Return:
             None
         """
-        graph_file = "Data/road-chesapeake.mtx"
+        graph_file = "Data/NewYork_Edgelist.csv"
         self.graph = myGraph()
-        self.graph.read_from_mtx_file(graph_file)
+        self.graph.read_from_csv_file(graph_file)
         self.myDijkstra = Dijkstra(self.graph)
 
         # Convert to Dijkstar graph
@@ -47,9 +47,9 @@ class TestGraphAndDijkstra(unittest.TestCase):
         Output:
             None
         """
-        self.assertIn(32, self.graph.graph)
-        self.assertIn(12, self.graph.graph[1])
-        self.assertEqual(self.graph.graph[1][23], 22)
+        self.assertIn(805200, self.graph.graph)
+        self.assertIn(2, self.graph.graph[1])
+        self.assertEqual(self.graph.graph[1][2], 14.570863)
 
     def test_shortest_path(self):
         """
@@ -59,16 +59,21 @@ class TestGraphAndDijkstra(unittest.TestCase):
         Output:
             None
         """
-        start_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        end_list = [25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39]
+        start_list = [247191, 247202, 247132, 247072, 697284, 898404, 1057992]
+        end_list = [298519, 298528, 45266, 12, 6, 8, 16, 18, 1, 2, 4]
         for start_node in start_list:
             for end_node in end_list:
-                path_info = find_path(self.dijkstar_graph, start_node, end_node)
-                self.assertIsNotNone(path_info.nodes)
-                self.assertEqual(
-                    self.myDijkstra.find_shortest_path(start_node, end_node),
-                    path_info.nodes,
-                )
+                try:
+                    path_info = find_path(self.dijkstar_graph, start_node, end_node)
+                    self.assertIsNotNone(path_info.nodes)
+                    self.assertEqual(
+                        self.myDijkstra.find_shortest_path(start_node, end_node),
+                        path_info.nodes,
+                    )
+                except NoPathError:
+                    self.assertIsNone(
+                        self.myDijkstra.find_shortest_path(start_node, end_node)
+                    )
 
     def test_dijkstra_time(self):
         """
