@@ -27,7 +27,7 @@ def create_pandanas_network(df: DataFrame) -> Network:
     edges = df[["START_NODE", "END_NODE", "LENGTH"]]
     edges.columns = ["from", "to", "weight"]
 
-    graph_network = net = pdna.Network(
+    graph_network = pdna.Network(
         nodes["x"], nodes["y"], edges["from"], edges["to"], edges[["weight"]]
     )
     return graph_network
