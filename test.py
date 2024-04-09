@@ -82,20 +82,50 @@ class TestGraphAndDijkstra(unittest.TestCase):
                     )
                     self.assertIsNot(True, ch_path_info)
 
-    def test_dijkstra_time(self):
+    def test_Algorithm_time(self):
         """
-        Tests and prints the performance of our Dijkstra algorithm in milliseconds.
+        Tests and prints the performance of our algorithms in milliseconds.
         Input:
             None
         Output:
             None.
         """
-        nodes_to_test = [2, 4, 8, 16, 32]
-        start_node = 1
-        print("{:<15} {:<15} {:<10}".format("Nodes", "Nodes Visited", "Time (ms)"))
 
-        ### Redo with better graphs
+        print(
+            "{:<15} {:<10} {:<10}".format(
+                "Path Length", "Dijkstar Time (ms)", "Contraction Heirachies (ms)"
+            )
+        )
+
+        for i in range(1, 15):
+            path_length = 0
+            starting_node = 1
+            ending_node = 1
+            while path_length != 2**i:
+                try:
+                    ending_node += 1
+                    ch_start_time = time.time()
+                    path_info = self.myCH.find_shortest_path(starting_node, ending_node)
+                    ch_end_time = time.time()
+                    path_length = len(path_info)
+                except Exception as e:
+                    starting_node += 1
+                    # ending_node = starting_node + 1
+                    continue
+            dij_start_time = time.time()
+            self.myDijkstra.find_shortest_path(starting_node, ending_node)
+            dij_end_time = time.time()
+            ch_time = (ch_end_time - ch_start_time) * 1000
+            dij_time = (dij_end_time - dij_start_time) * 1000
+            print("{:<15} {:<10.2f} {:<10.2f}".format(path_length, dij_time, ch_time))
 
 
 if __name__ == "__main__":
-    unittest.main()
+    # All tests:
+    # unittest.main()
+
+    # Specfic Tests:
+    suite = unittest.TestSuite()
+    suite.addTest(TestGraphAndDijkstra("test_Algorithm_time"))
+    runner = unittest.TextTestRunner()
+    runner.run(suite)
