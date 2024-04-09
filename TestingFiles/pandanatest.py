@@ -34,7 +34,7 @@ def create_pandanas_network(df: DataFrame) -> Network:
 
 
 def find_shortest_path(net: Network):
-    start_node = 247191
+    start_node = 16
     end_node = 184
     start = time.time()
     shortest_distance = net.shortest_path(start_node, end_node)

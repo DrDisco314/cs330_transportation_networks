@@ -12,13 +12,14 @@ import unittest
 from dijkstar import Graph as DijkstarGraph, find_path, NoPathError
 from src.graph import Graph as myGraph
 from Algorithms.Dijkstra import Dijkstra
+from Algorithms.CH import CH
 import time
 
 
 class TestGraphAndDijkstra(unittest.TestCase):
     def setUp(self):
         """
-        Initialize the testing class.
+        Initialize the testing suite.
         Input:
             None
         Return:
@@ -28,6 +29,7 @@ class TestGraphAndDijkstra(unittest.TestCase):
         self.graph = myGraph()
         self.graph.read_from_csv_file(graph_file)
         self.myDijkstra = Dijkstra(self.graph)
+        self.myCH = CH(graph_file)
 
         # Convert to Dijkstar graph
         """
@@ -64,16 +66,21 @@ class TestGraphAndDijkstra(unittest.TestCase):
         for start_node in start_list:
             for end_node in end_list:
                 try:
-                    path_info = find_path(self.dijkstar_graph, start_node, end_node)
-                    self.assertIsNotNone(path_info.nodes)
+                    dijkstrar_path_info = find_path(
+                        self.dijkstar_graph, start_node, end_node
+                    )
+                    ch_path_info = self.myCH.find_shortest_path(start_node, end_node)
+                    self.assertIsNotNone(dijkstrar_path_info.nodes)
                     self.assertEqual(
                         self.myDijkstra.find_shortest_path(start_node, end_node),
-                        path_info.nodes,
+                        dijkstrar_path_info.nodes,
+                        ch_path_info,
                     )
                 except NoPathError:
                     self.assertIsNone(
                         self.myDijkstra.find_shortest_path(start_node, end_node)
                     )
+                    self.assertIsNot(True, ch_path_info)
 
     def test_dijkstra_time(self):
         """
