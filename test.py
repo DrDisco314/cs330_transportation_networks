@@ -15,7 +15,6 @@ from Algorithms.Dijkstra import Dijkstra
 from Algorithms.CH import CH
 import time
 
-
 class TestGraphAndDijkstra(unittest.TestCase):
     def setUp(self):
         """

@@ -12,6 +12,25 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import csv
 
+class Node:
+    def __init__(self, value: int):
+        """
+        Initialize the Graph Class.
+        Input:
+            None
+        Return:
+            None
+        """
+        self.value = value
+        self.xcoord = None
+        self.ycoord = None
+
+    def __str__(self):
+        return f"Node {self.value} ({self.xcoord}, {self.ycoord})"
+
+    def __repr__(self):
+        return f"Node {self.value} ({self.xcoord}, {self.ycoord})"
+
 
 class Graph:
     def __init__(self):
@@ -23,8 +42,31 @@ class Graph:
             None
         """
         self.graph = {}
+        self.smallest_x_node = None
+        self.smallest_y_node = None
+        self.largest_x_node = None
+        self.largest_y_node = None
 
     def add_edge(self, node1: int, node2: int, weight: float):
+        """
+        Adds the edge from one node to another.
+        Input:
+            Node1 (int) : Integer representing first node.
+            Node2 (int) : Intger representing second node
+            weight (int) : Integer representing weight of edge from 2 nodes.
+        Return:
+            None
+        """
+        if node1 not in self.graph:
+            self.graph[node1] = {}
+        if node2 not in self.graph:
+            self.graph[node2] = {}
+
+        # Symetric Implementation
+        self.graph[node1][node2] = weight
+        self.graph[node2][node1] = weight
+
+    def add_edge_node(self, node1: Node, node2: Node, weight: float):
         """
         Adds the edge from one node to another.
         Input:
@@ -62,6 +104,82 @@ class Graph:
                         node1, node2 = int(parts[0]), int(parts[1])
                         weight = abs(node1 - node2)
                         self.add_edge(node1, node2, weight)
+        except FileNotFoundError:
+            print(f"Error: File '{filename}' not found.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+    def read_from_csv_file(self, filename: str):
+        """
+        Reads in a file in the form of csv where nodes are in the same line.
+        Input:
+            filename (str) : Filename as a string
+        Return:
+            None
+        """
+        ##XCoord,YCoord,START_NODE,END_NODE,EDGE,LENGTH
+        try:
+            with open(filename, newline="") as file:
+                reader = csv.DictReader(file)
+                for row in reader:
+                    self.add_edge(
+                        int(row["START_NODE"]),
+                        int(row["END_NODE"]),
+                        float(row["LENGTH"]),
+                    )
+        except FileNotFoundError:
+            print(f"Error: File '{filename}' not found.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+    def process_nodes(self, filename: str):
+        nodes = {}
+        try:
+            with open(filename, newline="") as file:
+                reader = csv.DictReader(file)
+                for row in reader:
+                    node = Node(int(row["START_NODE"]))
+                    node.xcoord = float(row["XCoord"])
+                    node.ycoord = float(row["YCoord"])
+
+                    if node not in nodes:
+                        nodes[int(row["START_NODE"])] = node
+                    else: continue
+
+            return nodes
+
+        except FileNotFoundError:
+            print(f"Error: File '{filename}' not found.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+    def read_from_csv_file_node(self, filename: str):
+        """
+        Reads in a file in the form of csv where nodes are in the same line.
+        Input:
+            filename (str) : Filename as a string
+        Return:
+            None
+        """
+        ##XCoord,YCoord,START_NODE,END_NODE,EDGE,LENGTH
+        processed_nodes = self.process_nodes(filename)
+
+        self.smallest_x_node = min(processed_nodes.values(), key=lambda node: node.xcoord)
+        self.largest_x_node = max(processed_nodes.values(), key=lambda node: node.xcoord)
+        self.smallest_y_node = min(processed_nodes.values(), key=lambda node: node.ycoord)
+        self.largest_y_node = max(processed_nodes.values(), key=lambda node: node.ycoord)
+
+        try:
+            with open(filename, newline="") as file:
+                reader = csv.DictReader(file)
+                for row in reader:
+                    start_node = processed_nodes[int(row["START_NODE"])]
+                    end_node = processed_nodes[int(row["END_NODE"])]
+                    self.add_edge(
+                        start_node,
+                        end_node,
+                        float(row["LENGTH"]),
+                    )
         except FileNotFoundError:
             print(f"Error: File '{filename}' not found.")
         except Exception as e:
