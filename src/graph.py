@@ -12,6 +12,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import csv
 
+
 class Node:
     def __init__(self, value: int):
         """
@@ -32,6 +33,7 @@ class Node:
     def __repr__(self):
         return f"Node {self.value} ({self.xcoord}, {self.ycoord})"
 
+
 class Edge:
     def __init__(self, weight: float, num_flags: int):
         """
@@ -42,7 +44,8 @@ class Edge:
             None
         """
         self.weight = weight
-        self.arc_flags = [False for _ in range(num_flags)] 
+        self.arc_flags = [False for _ in range(num_flags)]
+
 
 class Graph:
     def __init__(self):
@@ -156,7 +159,8 @@ class Graph:
 
                     if node not in nodes:
                         nodes[int(row["START_NODE"])] = node
-                    else: continue
+                    else:
+                        continue
 
             return nodes
 
@@ -176,10 +180,18 @@ class Graph:
         ##XCoord,YCoord,START_NODE,END_NODE,EDGE,LENGTH
         processed_nodes = self.process_nodes(filename)
 
-        self.smallest_x_node = min(processed_nodes.values(), key=lambda node: node.xcoord)
-        self.largest_x_node = max(processed_nodes.values(), key=lambda node: node.xcoord)
-        self.smallest_y_node = min(processed_nodes.values(), key=lambda node: node.ycoord)
-        self.largest_y_node = max(processed_nodes.values(), key=lambda node: node.ycoord)
+        self.smallest_x_node = min(
+            processed_nodes.values(), key=lambda node: node.xcoord
+        )
+        self.largest_x_node = max(
+            processed_nodes.values(), key=lambda node: node.xcoord
+        )
+        self.smallest_y_node = min(
+            processed_nodes.values(), key=lambda node: node.ycoord
+        )
+        self.largest_y_node = max(
+            processed_nodes.values(), key=lambda node: node.ycoord
+        )
 
         try:
             with open(filename, newline="") as file:
