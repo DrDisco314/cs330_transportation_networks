@@ -33,6 +33,7 @@ def bidirectional_dijkstra(graph: Graph, start_node: Node, end_node: Node):
 
 	mu = float('inf')
 
+	### the conditional here may need to be an or statement - check this.
 	while priority_queue_forward and priority_queue_backward:
 		current_distance_f, current_node_f = heapq.heappop(priority_queue_f)
 		current_distance_b, current_node_b = heapq.heappop(priority_queue_b)
@@ -61,32 +62,33 @@ def bidirectional_dijkstra(graph: Graph, start_node: Node, end_node: Node):
 				mu = distance + distances_f[neighbor_b]
 
 		# mu is distance from s-t
+			# Verify that this is the termination condition
 		if distances_f[current_node_f] + distances_b[current_node_b] >= mu:
 			return(set_f, set_b)
 
 
 
-# ###pseudocode implementation
-# def psuedocode_bi_dijk(G):
-# 	while Qf is not empty and Qb is not empty:
-# 	    u = extract_min(Qf); v = extract_min(Qb)
-# 	    Sf.add(u); Sb.add(v)
-# 	    for x in adj(u):
-# 	        relax(u, x)
-# 	        if x in Sb and df[u] + w(u, x) + db[x] < mu:
-# 	            mu = df[u] + w(u, x) + db[x]
-# 	    for x in adj(v):
-# 	        relax(v, x)
-# 	        if x in Sf and db[v] + w(v, x) + df[x] < mu:
-# 	            mu = db[v] + w(v, x) + df[x]
-# 	    if df[u] + db[v] >= mu:
-# 	        break # mu is the true distance s-t
+###pseudocode implementation
+def psuedocode_bi_dijk(G):
+	while Qf is not empty and Qb is not empty:
+	    u = extract_min(Qf); v = extract_min(Qb)
+	    Sf.add(u); Sb.add(v)
+	    for x in adj(u):
+	        relax(u, x)
+	        if x in Sb and df[u] + w(u, x) + db[x] < mu:
+	            mu = df[u] + w(u, x) + db[x]
+	    for x in adj(v):
+	        relax(v, x)
+	        if x in Sf and db[v] + w(v, x) + df[x] < mu:
+	            mu = db[v] + w(v, x) + df[x]
+	    if df[u] + db[v] >= mu:
+	        break # mu is the true distance s-t
 
-# ## pseudocode bidirectional relax
-# def relax(u,x):
-# 	if (x is not in Sf) and df[x] > df[u] + weight(u, x):
-# 	    df[x] = df[u] + weight(u, x)
-# 	    Qf.add(x, priority=df[x])
+## pseudocode bidirectional relax
+def relax(u,x):
+	if (x is not in Sf) and df[x] > df[u] + weight(u, x):
+	    df[x] = df[u] + weight(u, x)
+	    Qf.add(x, priority=df[x])
 
 
 def rectangular_partition(graph: Graph) -> tuple[list[float],list[float]]:
