@@ -8,8 +8,8 @@ from Algorithms.Dijkstra import Dijkstra
 
 
 def main():
-    start_node = 247191
-    end_node = 184
+    start_node = 37
+    end_node = 66
     mygraph = Graph()
 
     mygraph.read_from_csv_file("Data/NewYork_Edgelist.csv")

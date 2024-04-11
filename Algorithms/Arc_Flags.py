@@ -11,7 +11,7 @@
 import heapq
 import sys
 
-sys.path.append("C:/comp_sci/cs330/cs330_transportation_networks/src")
+sys.path.append("../cs330_transportation_networks/src")
 from graph import Graph, Node
 
 graph_file = "Data/NewYork_Edgelist.csv"
@@ -23,27 +23,28 @@ NUM_PARTITIONS_AXIS = 10
 
 
 def bidirectional_dijkstra(graph: Graph, start_node: Node, end_node: Node):
-    distances_f = {node: float("inf") for node in self.graph.graph}
+    print(start_node, end_node)
+    distances_f = {node: float("inf") for node in graph.graph}
     distances_f[start_node] = 0
     priority_queue_f = [(0, start_node)]
-    set_f = {node: None for node in self.graph.graph}
+    set_f = {node: None for node in graph.graph}
 
-    distances_b = {node: float("inf") for node in self.graph.graph}
+    distances_b = {node: float("inf") for node in graph.graph}
     distances_b[end_node] = 0
     priority_queue_b = [(0, end_node)]
-    set_b = {node: None for node in self.graph.graph}
+    set_b = {node: None for node in graph.graph}
 
-	### the conditional here may need to be an or statement - check this.
-	while priority_queue_forward and priority_queue_backward:
-		current_distance_f, current_node_f = heapq.heappop(priority_queue_f)
-		current_distance_b, current_node_b = heapq.heappop(priority_queue_b)
+    mu = float("inf")
 
-    	mu = float("inf")
+    ### the conditional here may need to be an or statement - check this.
+    while priority_queue_f and priority_queue_b:
+        current_distance_f, current_node_f = heapq.heappop(priority_queue_f)
+        current_distance_b, current_node_b = heapq.heappop(priority_queue_b)
 
         set_f[current_node_f] = current_node_f
         set_b[current_node_b] = current_node_b
 
-        for neighbor_f, weight_f in self.graph.get_neighbors(current_node_f).items():
+        for neighbor_f, weight_f in graph.get_neighbors(current_node_f).items():
 
             distance = current_distance_f + weight_f
             if (neighbor_f not in set_f) and distances_f[neighbor_f] > distance:
@@ -53,7 +54,7 @@ def bidirectional_dijkstra(graph: Graph, start_node: Node, end_node: Node):
             if (neighbor_f in set_b) and distance + distances_b[neighbor_f] < mu:
                 mu = distance + distances_b[neighbor_f]
 
-        for neighbor_b, weight_b in self.graph.get_neighbors(current_node_b).items():
+        for neighbor_b, weight_b in graph.get_neighbors(current_node_b).items():
 
             distance = current_distance_b + weight_b
             if (neighbor_b not in set_b) and distances_b[neighbor_b] > distance:
@@ -64,32 +65,33 @@ def bidirectional_dijkstra(graph: Graph, start_node: Node, end_node: Node):
                 mu = distance + distances_f[neighbor_b]
 
         # mu is distance from s-t
-        	# Verify that this is the termination condition
+        # Verify that this is the termination condition
         if distances_f[current_node_f] + distances_b[current_node_b] >= mu:
             return (set_f, set_b)
+    print("Something badly wrong happened")
 
 
 ###pseudocode implementation
-def psuedocode_bi_dijk(G):
-	while Qf is not empty and Qb is not empty:
-	    u = extract_min(Qf); v = extract_min(Qb)
-	    Sf.add(u); Sb.add(v)
-	    for x in adj(u):
-	        relax(u, x)
-	        if x in Sb and df[u] + w(u, x) + db[x] < mu:
-	            mu = df[u] + w(u, x) + db[x]
-	    for x in adj(v):
-	        relax(v, x)
-	        if x in Sf and db[v] + w(v, x) + df[x] < mu:
-	            mu = db[v] + w(v, x) + df[x]
-	    if df[u] + db[v] >= mu:
-	        break # mu is the true distance s-t
+# def psuedocode_bi_dijk(G):
+# 	while Qf is not empty and Qb is not empty:
+# 	    u = extract_min(Qf); v = extract_min(Qb)
+# 	    Sf.add(u); Sb.add(v)
+# 	    for x in adj(u):
+# 	        relax(u, x)
+# 	        if x in Sb and df[u] + w(u, x) + db[x] < mu:
+# 	            mu = df[u] + w(u, x) + db[x]
+# 	    for x in adj(v):
+# 	        relax(v, x)
+# 	        if x in Sf and db[v] + w(v, x) + df[x] < mu:
+# 	            mu = db[v] + w(v, x) + df[x]
+# 	    if df[u] + db[v] >= mu:
+# 	        break # mu is the true distance s-t
 
 ## pseudocode bidirectional relax
-def relax(u,x):
-	if (x is not in Sf) and df[x] > df[u] + weight(u, x):
-	    df[x] = df[u] + weight(u, x)
-	    Qf.add(x, priority=df[x])
+# def relax(u,x):
+# 	if (x is not in Sf) and df[x] > df[u] + weight(u, x):
+# 	    df[x] = df[u] + weight(u, x)
+# 	    Qf.add(x, priority=df[x])
 
 
 def rectangular_partition(graph: Graph) -> tuple[list[float], list[float]]:
