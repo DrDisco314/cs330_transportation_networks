@@ -33,7 +33,7 @@ class Node:
         return f"Node {self.value} ({self.xcoord}, {self.ycoord})"
 
 class Edge:
-    def __init__(self, weight: float):
+    def __init__(self, weight: float, num_flags: int):
         """
         Initialize the Edge Class.
         Input:
@@ -42,9 +42,7 @@ class Edge:
             None
         """
         self.weight = weight
-        self.arc_flags = [False for _ in range()] 
-
-
+        self.arc_flags = [False for _ in range(num_flags)] 
 
 class Graph:
     def __init__(self):
