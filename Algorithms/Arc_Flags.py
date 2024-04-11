@@ -39,8 +39,29 @@ def bidirectional_dijkstra(graph: Graph, start_node: Node, end_node: Node):
 		set_b[current_node_b] = current_node_b
 
 		for neighbor_f, weight_f in self.graph.get_neighbors(current_node_f).items():
-			relax(u, x)
-			distance_f = current_distance_f + weight
+
+			distance = current_distance_f + weight_f
+			if (neighbor_f not in set_f) and distances_f[neighbor_f] > distance:
+				distances_f[neighbor_f] = distance
+				heapq.heappush(priority_queue, (distance, neighbor_f))
+
+			if (neighbor_f in set_b) and distance + distances_b[neighbor_f] < mu:
+				mu = distance + distances_b[neighbor_f]
+
+		for neighbor_b, weight_b in self.graph.get_neighbors(current_node_b).items():
+
+			distance = current_distance_b + weight_b
+			if (neighbor_b not in set_b) and distances_b[neighbor_b] > distance:
+				distances_b[neighbor_b] = distance
+				heapq.heappush(priority_queue, (distance, neighbor_b))
+
+			if (neighbor_b in set_f) and distance + distances_f[neighbor_b] < mu:
+				mu = distance + distances_f[neighbor_b]
+
+		# mu is distance from s-t
+		if distances_f[current_node_f] + distances_b[current_node_b] >= mu:
+			break
+
 
 
 ###pseudocode implementation
