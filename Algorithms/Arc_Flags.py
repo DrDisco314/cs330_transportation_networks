@@ -20,6 +20,52 @@ graph.read_from_csv_file_node(graph_file)
 # Sets the number of partitions to take along a given axis.
 NUM_PARTITIONS_AXIS = 10
 
+def bidirectional_dijkstra(graph: Graph, start_node: Node, end_node: Node):
+	distances_f = {node: float("infinity") for node in self.graph.graph}
+	distances_f[start_node] = 0
+	priority_queue_f = [(0, start_node)]
+	set_f = {node: None for node in self.graph.graph}
+
+	distances_b = {node: float("infinity") for node in self.graph.graph}
+	distances_b[end_node] = 0
+	priority_queue_b = [(0, end_node)]
+	set_b = {node: None for node in self.graph.graph}
+
+	while priority_queue_forward and priority_queue_backward:
+		current_distance_f, current_node_f = heapq.heappop(priority_queue_f)
+		current_distance_b, current_node_b = heapq.heappop(priority_queue_b)
+
+		set_f[current_node_f] = current_node_f
+		set_b[current_node_b] = current_node_b
+
+		for neighbor_f, weight_f in self.graph.get_neighbors(current_node_f).items():
+			relax(u, x)
+			distance_f = current_distance_f + weight
+
+
+###pseudocode implementation
+def psuedocode_bi_dijk(G):
+	while Qf is not empty and Qb is not empty:
+	    u = extract_min(Qf); v = extract_min(Qb)
+	    Sf.add(u); Sb.add(v)
+	    for x in adj(u):
+	        relax(u, x)
+	        if x in Sb and df[u] + w(u, x) + db[x] < mu:
+	            mu = df[u] + w(u, x) + db[x]
+	    for x in adj(v):
+	        relax(v, x)
+	        if x in Sf and db[v] + w(v, x) + df[x] < mu:
+	            mu = db[v] + w(v, x) + df[x]
+	    if df[u] + db[v] >= mu:
+	        break # mu is the true distance s-t
+
+## pseudocode bidirectional relax
+def relax(u,x):
+	if (x is not in Sf) and df[x] > df[u] + weight(u, x):
+	    df[x] = df[u] + weight(u, x)
+	    Qf.add(x, priority=df[x])
+
+
 def rectangular_partition(graph: Graph) -> tuple[list[float],list[float]]:
 	width = graph.largest_x_node.xcoord - graph.smallest_x_node.xcoord
 	height = graph.largest_y_node.ycoord - graph.smallest_y_node.ycoord
@@ -40,51 +86,58 @@ def rectangular_partition(graph: Graph) -> tuple[list[float],list[float]]:
 		current_parition += h_partition_size
 		height_partitions.append(current_parition)
 
-	# print(f"width: {width}")
-	print(f"height: {height}")
-
-	print(f"minimum x coord: {graph.smallest_x_node.xcoord}")
-	print(f"minimum y coord: {graph.smallest_y_node.ycoord}")
-	print(f"maximum x coord: {graph.largest_x_node.xcoord}")
-	print(f"maximum y coord: {graph.largest_y_node.ycoord}")
-
-	print(f"w_partition_size: {w_partition_size}")
-	print(f"h_partition_size: {h_partition_size}")
-	print(f"width partitions: {width_partitions}")
-	print(f"height partitions: {height_partitions}")
-
 	return (width_partitions, height_partitions)
 
 
-def get_node_region(node: Node, paritions: tuple[list[float],list[float]]
+def get_node_region(node: Node, partitions: tuple[list[float],list[float]]
 	) -> tuple[int, int]:
 	
 	width_partitions = partitions[0]
+	w_partition_size = width_partitions[1] - width_partitions[0]
 	node_x_region = None
 	for idx, partition in enumerate(width_partitions):
-		if node.xcoord <= partition:
+		if node.xcoord <= partition and node.xcoord >= (partition - w_partition_size):
 			node_x_region = idx
 
 	height_partitions = partitions[1]
+	h_partition_size = height_partitions[1] - height_partitions[0]
 	node_y_region = None
 	for idx, partition in enumerate(height_partitions):
-		if node.ycoord <= partition:
+		if node.ycoord <= partition and node.ycoord >= (partition - h_partition_size):
 			node_y_region = idx
 
 	return (node_x_region, node_y_region)
 
 
 def preprocess_graph(graph):
-	partitions = rectangular_partition(graph) 
+	partitions = rectangular_partition(graph)
 
+	### Debugging, print the first 10 dictionary entries
+	# count = 0
+	# for key, value in graph.graph.items():
+	#     if count < 10:
+	#         print(f"{key}: {value}")
+	#         for k in value.keys():
+	#         	print("keys in value")
+	#         	print(f"{k}")
+	#         count += 1
+	#     else:
+	#     	break
 
-partitions = rectangular_partition(graph)
-test_node = Node(1)
-test_node.xcoord = 509471
-test_node.ycoord = 4435791
+	### Identify edge nodes in the collection of nodes
+	edge_nodes = []
+	for key, value in graph.graph.items():
+		start_node_region = get_node_region(key, partitions)
+		key.region = start_node_region
+		for node in value.keys():
+			if get_node_region(node, partitions) != start_node_region:
+				edge_nodes.append(key)
 
-node_region = get_node_region(test_node, partitions)
-print(f"node region: {node_region}")
+	# Do a shortest path search between an edge node and all nodes in its region
+	for edge_node in edge_nodes:
+		pass
+
+preprocess_graph(graph)
 
 
 # We can now exploit this property: for a specified region r

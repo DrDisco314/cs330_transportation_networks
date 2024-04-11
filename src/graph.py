@@ -15,21 +15,35 @@ import csv
 class Node:
     def __init__(self, value: int):
         """
-        Initialize the Graph Class.
+        Initialize the Node Class.
         Input:
-            None
+            Value of node
         Return:
             None
         """
         self.value = value
         self.xcoord = None
         self.ycoord = None
+        self.region = None
 
     def __str__(self):
         return f"Node {self.value} ({self.xcoord}, {self.ycoord})"
 
     def __repr__(self):
         return f"Node {self.value} ({self.xcoord}, {self.ycoord})"
+
+class Edge:
+    def __init__(self, weight: float):
+        """
+        Initialize the Edge Class.
+        Input:
+            Weight of edge
+        Return:
+            None
+        """
+        self.weight = weight
+        self.arc_flags = [False for _ in range()] 
+
 
 
 class Graph:
