@@ -8,11 +8,11 @@ from Algorithms.Dijkstra import Dijkstra
 
 
 def main():
-    start_node = 37
-    end_node = 66
+    start_node = 1
+    end_node = 204
     mygraph = Graph()
 
-    mygraph.read_from_csv_file("Data/NewYork_Edgelist.csv")
+    mygraph.read_from_csv_file("Data/DIMCAS_New_York_graph.csv")
     # dictgraph = mygraph.return_graph()
     # for key, value in dictgraph.items():
     #     print(key, value)

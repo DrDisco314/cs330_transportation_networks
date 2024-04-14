@@ -15,6 +15,7 @@ from Algorithms.Dijkstra import Dijkstra
 from Algorithms.CH import CH
 import time
 
+
 class TestGraphAndDijkstra(unittest.TestCase):
     def setUp(self):
         """
@@ -121,10 +122,10 @@ class TestGraphAndDijkstra(unittest.TestCase):
 
 if __name__ == "__main__":
     # All tests:
-    # unittest.main()
+    unittest.main()
 
     # Specfic Tests:
-    suite = unittest.TestSuite()
-    suite.addTest(TestGraphAndDijkstra("test_Algorithm_time"))
-    runner = unittest.TextTestRunner()
-    runner.run(suite)
+    # suite = unittest.TestSuite()
+    # suite.addTest(TestGraphAndDijkstra("test_Algorithm_time"))
+    # runner = unittest.TextTestRunner()
+    # runner.run(suite)

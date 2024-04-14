@@ -35,7 +35,7 @@ def create_pandanas_network(df: DataFrame) -> Network:
 
 def find_shortest_path(net: Network):
     start_node = 1
-    end_node = 2
+    end_node = 204
     start = time.time()
     shortest_distance = net.shortest_path(start_node, end_node)
     end = time.time()
@@ -44,7 +44,7 @@ def find_shortest_path(net: Network):
 
 
 def main():
-    graphdf = load_csv("Data/NewYork_Edgelist.csv")
+    graphdf = load_csv("Data/DIMCAS_New_York_graph.csv")
     graph_network = create_pandanas_network(graphdf)
     find_shortest_path(graph_network)
 

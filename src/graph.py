@@ -132,7 +132,7 @@ class Graph:
         Return:
             None
         """
-        ##XCoord,YCoord,START_NODE,END_NODE,EDGE,LENGTH
+
         try:
             with open(filename, newline="") as file:
                 reader = csv.DictReader(file)
@@ -251,34 +251,3 @@ class Graph:
             Dictionary of graph
         """
         return self.graph
-
-    def visualize_graph(self):
-        """
-        Visualize the current graph using the NetworkX package.
-        Input:
-            None
-        Return:
-            None
-        """
-
-        """Citation: https://networkx.org/
-            Author: NetworkX developers
-        Package for visualizing a weighted graph to help visualize network.
-        """
-        G = nx.Graph()
-        # Add our weighted graph to the nx Graph
-        for node, neighbors in self.graph.items():
-            for neighbor, weight in neighbors.items():
-                G.add_edge(node, neighbor, weight=weight)
-
-        # Use networkX methods to add attributes to graph.
-        pos = nx.spring_layout(G)
-        nx.draw_networkx_nodes(G, pos, node_size=700)
-        nx.draw_networkx_edges(G, pos, width=2)
-        nx.draw_networkx_labels(G, pos, font_size=10, font_family="sans-serif")
-
-        edge_labels = nx.get_edge_attributes(G, "weight")
-        nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
-
-        plt.axis("off")
-        plt.show()

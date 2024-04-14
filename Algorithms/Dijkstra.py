@@ -50,7 +50,7 @@ class Dijkstra:
             Heap Queue keeps track of most recently visted nodes on top of stack.
             """
             current_distance, current_node = heapq.heappop(priority_queue)
-            # If shorter path already found -> continue
+            # If shorter path already found, continue
             if current_distance > self.distances[current_node]:
                 continue
             for neighbor, weight in self.graph.get_neighbors(current_node).items():
