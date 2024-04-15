@@ -14,6 +14,8 @@ import sys
 sys.path.append("../cs330_transportation_networks/src")
 from graph import Graph, Node
 
+
+### Debugging: Testing on a sample graph
 graph_file = "Data/NewYork_Edgelist.csv"
 graph = Graph()
 graph.read_from_csv_file_node(graph_file)
@@ -22,21 +24,37 @@ graph.read_from_csv_file_node(graph_file)
 NUM_PARTITIONS_AXIS = 10
 
 
-def bidirectional_dijkstra(graph: Graph, start_node: Node, end_node: Node):
-    print(start_node, end_node)
+def bidirectional_dijkstra(graph: Graph, start_node: Node, end_node: Node): 
+    """
+        Runs a bidirectional Dijkstra's algorithm between start_node and end_node
+    Input:
+        graph Graph : A graph object with node keys and a dictionary as value storing other
+            Node neighbors and weight.
+        start_node Node : A starting node storing a label, coordinates, and weights to other Node objects.
+        end_node Node : An ending node storing a label, coordinates, and weights to other Node objects.
+    Output:
+        (set_f, set_b) : A tuple containing the forward and backward search shortest path trees.
+    """
+
+    # Citation: https://www.homepages.ucl.ac.uk/~ucahmto/math/2020/05/30/bidirectional-dijkstra.html
+    # Pseudocode algorithm and website's description were very helpful for implementing a bidirectional
+    #   dijkstra's algorithm.
+
+    # Define values for the forward search
     distances_f = {node: float("inf") for node in graph.graph}
     distances_f[start_node] = 0
     priority_queue_f = [(0, start_node)]
     set_f = {node: None for node in graph.graph}
 
+    # Define values for the backward search
     distances_b = {node: float("inf") for node in graph.graph}
     distances_b[end_node] = 0
     priority_queue_b = [(0, end_node)]
     set_b = {node: None for node in graph.graph}
 
+    # Initialize distance from source to target to infinite till better seen
     mu = float("inf")
 
-    ### the conditional here may need to be an or statement - check this.
     while priority_queue_f and priority_queue_b:
         current_distance_f, current_node_f = heapq.heappop(priority_queue_f)
         current_distance_b, current_node_b = heapq.heappop(priority_queue_b)
@@ -44,6 +62,7 @@ def bidirectional_dijkstra(graph: Graph, start_node: Node, end_node: Node):
         set_f[current_node_f] = current_node_f
         set_b[current_node_b] = current_node_b
 
+        # Check the neighbors of current stack node on the forward search
         for neighbor_f, weight_f in graph.get_neighbors(current_node_f).items():
 
             distance = current_distance_f + weight_f
@@ -54,6 +73,7 @@ def bidirectional_dijkstra(graph: Graph, start_node: Node, end_node: Node):
             if (neighbor_f in set_b) and distance + distances_b[neighbor_f] < mu:
                 mu = distance + distances_b[neighbor_f]
 
+        # Check the neighbors of current stack node on the backward search
         for neighbor_b, weight_b in graph.get_neighbors(current_node_b).items():
 
             distance = current_distance_b + weight_b
@@ -65,41 +85,28 @@ def bidirectional_dijkstra(graph: Graph, start_node: Node, end_node: Node):
                 mu = distance + distances_f[neighbor_b]
 
         # mu is distance from s-t
-        # Verify that this is the termination condition
         if distances_f[current_node_f] + distances_b[current_node_b] >= mu:
             return (set_f, set_b)
     print("Something badly wrong happened")
 
 
-###pseudocode implementation
-# def psuedocode_bi_dijk(G):
-# 	while Qf is not empty and Qb is not empty:
-# 	    u = extract_min(Qf); v = extract_min(Qb)
-# 	    Sf.add(u); Sb.add(v)
-# 	    for x in adj(u):
-# 	        relax(u, x)
-# 	        if x in Sb and df[u] + w(u, x) + db[x] < mu:
-# 	            mu = df[u] + w(u, x) + db[x]
-# 	    for x in adj(v):
-# 	        relax(v, x)
-# 	        if x in Sf and db[v] + w(v, x) + df[x] < mu:
-# 	            mu = db[v] + w(v, x) + df[x]
-# 	    if df[u] + db[v] >= mu:
-# 	        break # mu is the true distance s-t
-
-## pseudocode bidirectional relax
-# def relax(u,x):
-# 	if (x is not in Sf) and df[x] > df[u] + weight(u, x):
-# 	    df[x] = df[u] + weight(u, x)
-# 	    Qf.add(x, priority=df[x])
-
-
 def rectangular_partition(graph: Graph) -> tuple[list[float], list[float]]:
+    """
+        Creates partitions in coordinate space to break a graph into rectangular region
+    Input:
+        graph Graph : A graph object with node keys and a dictionary as value storing other
+            Node neighbors and weight
+    Output:
+        tuple[list[float], list[float]] : Defines a first and second list to mark points along 
+            the x and y axes respectively as partition lines
+    """
+    # Width and height of farthest nodes in graph
     width = graph.largest_x_node.xcoord - graph.smallest_x_node.xcoord
     height = graph.largest_y_node.ycoord - graph.smallest_y_node.ycoord
 
     partitions = []
 
+    # Get partition popints along x axis
     width_partitions = []
     w_partition_size = width / NUM_PARTITIONS_AXIS
     current_parition = graph.smallest_x_node.xcoord
@@ -107,6 +114,7 @@ def rectangular_partition(graph: Graph) -> tuple[list[float], list[float]]:
         current_parition += w_partition_size
         width_partitions.append(current_parition)
 
+    # Get partition popints along y axis
     height_partitions = []
     h_partition_size = height / NUM_PARTITIONS_AXIS
     current_parition = graph.smallest_y_node.ycoord
@@ -120,10 +128,22 @@ def rectangular_partition(graph: Graph) -> tuple[list[float], list[float]]:
 def get_node_region(
     node: Node, partitions: tuple[list[float], list[float]]
 ) -> tuple[int, int]:
-
+    """
+        Returns the region that a node belongs to
+    Input:
+        node Node : Node to get region of
+        paritions tuple[list[float], list[float]] : The rectangular parition points along the graph to
+            be compared with node's coordinates
+    Output:
+        tuple[int, int] : The region that the node belongs to stored as (x Region, y region) where
+        (0, 0) is the first rectangular region
+    """
+    # Get x-axis partition poiints and determine partition size
     width_partitions = partitions[0]
     w_partition_size = width_partitions[1] - width_partitions[0]
+
     node_x_region = None
+    # check node coordinate with x partition points till node is within parition region
     for idx, partition in enumerate(width_partitions):
         if node.xcoord <= partition and node.xcoord >= (partition - w_partition_size):
             node_x_region = idx
@@ -138,22 +158,22 @@ def get_node_region(
     return (node_x_region, node_y_region)
 
 
-def preprocess_graph(graph):
+def preprocess_graph(graph : Graph) -> Graph:
+    """
+        Preprocesses a graph with arc-flags such that each edge has the appropriate arc-flags
+            vector set. The arc-flags vector has n-regions and for each element n_i if it is true
+            and edge is the shortest path to the region R_i, else false. The graph is preprocesseed
+            using the shortest path tree between border nodes and all other nodes in a region.
+    Input:
+        graph Graph : The Graph object to be preprocessed
+    Output:
+        Graph : Resultant graph object has been processed such that each edge has its arc-flags vector set
+            using a rectangual partition.
+    """
+    # Use rectangular partition function
     partitions = rectangular_partition(graph)
 
-    ### Debugging, print the first 10 dictionary entries
-    # count = 0
-    # for key, value in graph.graph.items():
-    #     if count < 10:
-    #         print(f"{key}: {value}")
-    #         for k in value.keys():
-    #         	print("keys in value")
-    #         	print(f"{k}")
-    #         count += 1
-    #     else:
-    #     	break
-
-    ### Identify edge nodes in the collection of nodes
+    # Identify edge nodes in the collection of nodes
     edge_nodes = []
     for key, value in graph.graph.items():
         start_node_region = get_node_region(key, partitions)
@@ -162,39 +182,7 @@ def preprocess_graph(graph):
             if get_node_region(node, partitions) != start_node_region:
                 edge_nodes.append(key)
 
-    # Do a shortest path search between an edge node and all nodes in its region
+    # Do a shortest path search between an edge node and all nodes in its region to set arc-flag vectors
     for edge_node in edge_nodes:
+        # bidirectional_dijkstra
         pass
-
-
-preprocess_graph(graph)
-
-
-# We can now exploit this property: for a specified region r
-# 0 ∈ R and a boundary node b of r
-# 0 we
-# calculate the set Tb of arcs a ∈ A with fa(r
-# 0
-# ) = true and where a is on a shortest path via b to
-# any node in r
-# 0
-# . The reversed arcs corresponding to arcs in the set Tb form in fact a shortest path tree
-# in the reverse graph Grev. A shortest path tree can be computed in time O(n log n) on sparse graphs.
-# Therefore, we can compute the flag entries fa(r
-# 0
-# ) for region r
-# 0
-# for all nodes a ∈ A at once, if we
-# compute a shortest path tree for each boundary node of r
-# 0
-# . This can be done in time O(kn log n) with
-# k = |Br
-# 0|, where Br
-# 0 is the boundary node set of r
-# 0
-# : Br
-# 0 = {v ∈ r
-# 0
-# | ∃(u, v) ∈ A such that ru 6= rv =
-# r
-# 0}.
