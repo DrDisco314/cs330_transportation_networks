@@ -25,7 +25,7 @@ class TestGraphAndDijkstra(unittest.TestCase):
         Return:
             None
         """
-        graph_file = "Data/NewYork_Edgelist.csv"
+        graph_file = "Data/WashingtonDC_Edgelist.csv"
         self.graph = myGraph()
         self.graph.read_from_csv_file(graph_file)
         self.myDijkstra = Dijkstra(self.graph)
@@ -108,6 +108,7 @@ class TestGraphAndDijkstra(unittest.TestCase):
                     path_info = self.myCH.find_shortest_path(starting_node, ending_node)
                     ch_end_time = time.time()
                     path_length = len(path_info)
+
                 except Exception as e:
                     starting_node += 1
                     # ending_node = starting_node + 1
@@ -122,10 +123,10 @@ class TestGraphAndDijkstra(unittest.TestCase):
 
 if __name__ == "__main__":
     # All tests:
-    unittest.main()
+    # unittest.main()
 
     # Specfic Tests:
-    # suite = unittest.TestSuite()
-    # suite.addTest(TestGraphAndDijkstra("test_Algorithm_time"))
-    # runner = unittest.TextTestRunner()
-    # runner.run(suite)
+    suite = unittest.TestSuite()
+    suite.addTest(TestGraphAndDijkstra("test_Algorithm_time"))
+    runner = unittest.TextTestRunner()
+    runner.run(suite)

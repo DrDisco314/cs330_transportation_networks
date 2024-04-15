@@ -13,10 +13,7 @@ def main():
     mygraph = Graph()
 
     mygraph.read_from_csv_file("Data/DIMCAS_New_York_graph.csv")
-    # dictgraph = mygraph.return_graph()
-    # for key, value in dictgraph.items():
-    #     print(key, value)
-    #     input("yo")
+
     dijkstra = Dijkstra(mygraph)
     start = time.time()
     shortest_path = dijkstra.find_shortest_path(start_node, end_node)
