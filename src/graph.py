@@ -33,6 +33,9 @@ class Node:
     def __repr__(self):
         return f"Node {self.value} ({self.xcoord}, {self.ycoord})"
 
+    def __lt__(self, other): # for <
+        return self.value < other.value
+
 
 class Edge:
     def __init__(self, weight: float, num_flags: int):

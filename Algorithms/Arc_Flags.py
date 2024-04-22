@@ -10,6 +10,7 @@
 
 import heapq
 import sys
+import random
 
 sys.path.append("../cs330_transportation_networks/src")
 from graph import Graph, Node
@@ -44,49 +45,61 @@ def bidirectional_dijkstra(graph: Graph, start_node: Node, end_node: Node):
     distances_f = {node: float("inf") for node in graph.graph}
     distances_f[start_node] = 0
     priority_queue_f = [(0, start_node)]
-    set_f = {node: None for node in graph.graph}
+    set_f = set()
+    path_f = [start_node]
 
     # Define values for the backward search
     distances_b = {node: float("inf") for node in graph.graph}
     distances_b[end_node] = 0
     priority_queue_b = [(0, end_node)]
-    set_b = {node: None for node in graph.graph}
+    set_b = set()
+    path_b = [end_node]
 
     # Initialize distance from source to target to infinite till better seen
     mu = float("inf")
 
     while priority_queue_f and priority_queue_b:
+        print("Trigger 1")
         current_distance_f, current_node_f = heapq.heappop(priority_queue_f)
         current_distance_b, current_node_b = heapq.heappop(priority_queue_b)
 
-        set_f[current_node_f] = current_node_f
-        set_b[current_node_b] = current_node_b
+        set_f.add(current_node_f)
+        set_b.add(current_node_b)
 
         # Check the neighbors of current stack node on the forward search
         for neighbor_f, weight_f in graph.get_neighbors(current_node_f).items():
 
             distance = current_distance_f + weight_f
             if (neighbor_f not in set_f) and distances_f[neighbor_f] > distance:
+                print("Trigger 2")
                 distances_f[neighbor_f] = distance
-                heapq.heappush(priority_queue, (distance, neighbor_f))
+                heapq.heappush(priority_queue_f, (distance, neighbor_f))
 
             if (neighbor_f in set_b) and distance + distances_b[neighbor_f] < mu:
+                print("Trigger 3")
                 mu = distance + distances_b[neighbor_f]
+                path_f.append(neighbor_f)
 
         # Check the neighbors of current stack node on the backward search
         for neighbor_b, weight_b in graph.get_neighbors(current_node_b).items():
 
             distance = current_distance_b + weight_b
             if (neighbor_b not in set_b) and distances_b[neighbor_b] > distance:
+                print("Trigger 4")
                 distances_b[neighbor_b] = distance
-                heapq.heappush(priority_queue, (distance, neighbor_b))
+                heapq.heappush(priority_queue_b, (distance, neighbor_b))
 
             if (neighbor_b in set_f) and distance + distances_f[neighbor_b] < mu:
+                print("Trigger 5")
                 mu = distance + distances_f[neighbor_b]
+                path_b.append(neighbor_b)
 
         # mu is distance from s-t
         if distances_f[current_node_f] + distances_b[current_node_b] >= mu:
-            return (set_f, set_b)
+            print("Trigger 6")
+            # return (set_f, set_b)
+            return (path_f, path_b)
+    
     print("Something badly wrong happened")
 
 
@@ -186,3 +199,23 @@ def preprocess_graph(graph : Graph) -> Graph:
     for edge_node in edge_nodes:
         # bidirectional_dijkstra
         pass
+
+print("testing...")
+
+nodes = list(graph.graph.keys())
+
+# print(nodes[0])
+start_node = random.choice(nodes)
+end_node = random.choice(nodes)
+print(f"Random node 1: {start_node}")
+print(f"Random node 2: {end_node}")
+
+
+path_f, path_b = bidirectional_dijkstra(graph, start_node, end_node)
+
+for node in path_f:
+    print(node)
+
+print()
+for node in path_b:
+    print(node)
