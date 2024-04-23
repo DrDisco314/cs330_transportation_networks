@@ -13,7 +13,7 @@ import sys
 import random
 
 sys.path.append("../cs330_transportation_networks/src")
-from graph import Graph, Node
+from src.graph import Graph, Node
 
 
 ### Debugging: Testing on a sample graph
@@ -25,7 +25,7 @@ graph.read_from_csv_file_node(graph_file)
 NUM_PARTITIONS_AXIS = 10
 
 
-def bidirectional_dijkstra(graph: Graph, start_node: Node, end_node: Node): 
+def bidirectional_dijkstra(graph: Graph, start_node: Node, end_node: Node):
     """
         Runs a bidirectional Dijkstra's algorithm between start_node and end_node
     Input:
@@ -47,7 +47,6 @@ def bidirectional_dijkstra(graph: Graph, start_node: Node, end_node: Node):
     priority_queue_f = [(0, start_node)]
     set_f = set()
     predecessors_f = {node: None for node in graph.graph}
-    # path_f = [start_node]
 
     # Define values for the backward search
     distances_b = {node: float("inf") for node in graph.graph}
@@ -55,7 +54,6 @@ def bidirectional_dijkstra(graph: Graph, start_node: Node, end_node: Node):
     priority_queue_b = [(0, end_node)]
     set_b = set()
     predecessors_b = {node: None for node in graph.graph}
-    # path_b = [end_node]
 
     # Initialize distance from source to target to infinite till better seen
     mu = float("inf")
@@ -63,7 +61,6 @@ def bidirectional_dijkstra(graph: Graph, start_node: Node, end_node: Node):
     transition_vertex = None
 
     while priority_queue_f and priority_queue_b:
-    # for _ in range(1):
         current_distance_f, current_node_f = heapq.heappop(priority_queue_f)
         current_distance_b, current_node_b = heapq.heappop(priority_queue_b)
 
@@ -75,86 +72,44 @@ def bidirectional_dijkstra(graph: Graph, start_node: Node, end_node: Node):
 
             distance = current_distance_f + weight_f
             if (neighbor_f not in set_f) and (distances_f[neighbor_f] > distance):
-                # print("Trigger 2")
                 distances_f[neighbor_f] = distance
                 predecessors_f[neighbor_f] = current_node_f
                 heapq.heappush(priority_queue_f, (distances_f[neighbor_f], neighbor_f))
 
             if (neighbor_f in set_b) and (distance + distances_b[neighbor_f] < mu):
-                print("Trigger 3")
                 mu = distance + distances_b[neighbor_f]
                 transition_vertex = neighbor_f
-                # path_f.append(neighbor_f)
 
         # Check the neighbors of current stack node on the backward search
         for neighbor_b, weight_b in graph.get_neighbors(current_node_b).items():
 
             distance = current_distance_b + weight_b
             if (neighbor_b not in set_b) and (distances_b[neighbor_b] > distance):
-                # print("Trigger 4")
                 distances_b[neighbor_b] = distance
                 predecessors_b[neighbor_b] = current_node_b
                 heapq.heappush(priority_queue_b, (distances_b[neighbor_b], neighbor_b))
 
             if (neighbor_b in set_f) and (distance + distances_f[neighbor_b] < mu):
-                print("Trigger 5")
                 mu = distance + distances_f[neighbor_b]
                 transition_vertex = neighbor_b
-                # path_b.append(neighbor_b)
 
         # mu is distance from s-t
         if (distances_f[current_node_f] + distances_b[current_node_b]) >= mu:
-            print("Trigger 6")
-
-            print("Intersection of forward and backward search:")
-            intersection = set_f & set_b
-            print(intersection)
-
-            # return (set_f, set_b)
-            # return (path_f, path_b)
             return(predecessors_f, predecessors_b, transition_vertex)
     
     print("Something wrong happened")
 
-# def get_shortest_path(predecessors_f, predecessors_b, transition_vertex, end_node):
-#         """
-#         """
-#         # path = []
-#         # current = end_node
-#         # while current is not None:
-#         #     path.append(current)
-#         #     current = self.predecessors[current]
-#         # if len(path) == 1:
-#         #     return None
-#         # return path[::-1]
-
-#         path_b = []
-#         current = end_node
-#         while current is not transition_vertex:
-#             path_b.append(current.value)
-#             current = predecessors_b[current]
-
-#         path_f = []
-#         current = transition_vertex
-#         while current is not None:
-#             path_f.append(current.value)
-#             current = predecessors_f[current]
-
-#         print("Path_f")
-#         print(path_f)
-#         print()
-#         print("Path_b")
-#         print(path_b)
 
 def reconstruct_shortest_path(predecessors_f, predecessors_b, meeting_node):
     path = []
-
+    
     # Reconstruct path from start node to meeting node using predecessors from forward search
     current_node = meeting_node
     while current_node in predecessors_f:
         path.append(current_node)
         current_node = predecessors_f[current_node]
-    path.append(current_node)  # Add the start node
+    # Add the start node
+    path.append(current_node)
 
     # Reverse the path since it was constructed in reverse order
     path.reverse()
@@ -175,7 +130,7 @@ def rectangular_partition(graph: Graph) -> tuple[list[float], list[float]]:
         graph Graph : A graph object with node keys and a dictionary as value storing other
             Node neighbors and weight
     Output:
-        tuple[list[float], list[float]] : Defines a first and second list to mark points along 
+        tuple[list[float], list[float]] : Defines a first and second list to mark points along
             the x and y axes respectively as partition lines
     """
     # Width and height of farthest nodes in graph
@@ -236,7 +191,7 @@ def get_node_region(
     return (node_x_region, node_y_region)
 
 
-def preprocess_graph(graph : Graph) -> Graph:
+def preprocess_graph(graph: Graph) -> Graph:
     """
         Preprocesses a graph with arc-flags such that each edge has the appropriate arc-flags
             vector set. The arc-flags vector has n-regions and for each element n_i if it is true
@@ -264,6 +219,7 @@ def preprocess_graph(graph : Graph) -> Graph:
     for edge_node in edge_nodes:
         # bidirectional_dijkstra
         pass
+
 
 print("testing...")
 
@@ -295,8 +251,14 @@ print(path)
 #     path_b.append(node.value)
 #     if node == transition_vertex: break
 
+<<<<<<< HEAD
 # print("Forward path...")
 # print(f"Path_f: {path_f}")
 # print()
 # print("Backward path...")
 # print(f"Path_b: {path_b}")
+=======
+print()
+for node in path_b:
+    print(node)
+>>>>>>> c84cd11828ae4518410de1be04f4dc8ef2ed61b9
