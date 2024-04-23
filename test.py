@@ -9,6 +9,7 @@
 """
 
 import unittest
+from statistics import mean
 from dijkstar import Graph as DijkstarGraph, find_path, NoPathError
 from src.graph import Graph as myGraph
 from Algorithms.Dijkstra import Dijkstra
@@ -104,21 +105,35 @@ class TestGraphAndDijkstra(unittest.TestCase):
             while path_length != 2**i:
                 try:
                     ending_node += 1
-                    ch_start_time = time.time()
+                    # ch_start_time = time.time()
                     path_info = self.myCH.find_shortest_path(starting_node, ending_node)
-                    ch_end_time = time.time()
+                    # ch_end_time = time.time()
                     path_length = len(path_info)
 
                 except Exception as e:
                     starting_node += 1
                     # ending_node = starting_node + 1
                     continue
-            dij_start_time = time.time()
-            self.myDijkstra.find_shortest_path(starting_node, ending_node)
-            dij_end_time = time.time()
-            ch_time = (ch_end_time - ch_start_time) * 1000
-            dij_time = (dij_end_time - dij_start_time) * 1000
-            print("{:<15} {:<10.2f} {:<10.2f}".format(path_length, dij_time, ch_time))
+            dij_time_list = []
+            ch_time_list = []
+            for j in range(5):
+                dij_start_time = time.time()
+                self.myDijkstra.find_shortest_path(starting_node, ending_node)
+                dij_end_time = time.time()
+                dij_time = (dij_end_time - dij_start_time) * 1000
+                dij_time_list.append(dij_time)
+
+                ch_start_time = time.time()
+                self.myCH.find_shortest_path(starting_node, ending_node)
+                ch_end_time = time.time()
+                ch_time = (ch_end_time - ch_start_time) * 1000
+                ch_time_list.append(ch_time)
+
+            print(
+                "{:<15} {:<10.2f} {:<10.2f}".format(
+                    path_length, mean(dij_time_list), mean(ch_time_list)
+                )
+            )
 
 
 if __name__ == "__main__":

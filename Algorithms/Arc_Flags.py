@@ -13,7 +13,7 @@ import sys
 import random
 
 sys.path.append("../cs330_transportation_networks/src")
-from graph import Graph, Node
+from src.graph import Graph, Node
 
 
 ### Debugging: Testing on a sample graph
@@ -25,7 +25,7 @@ graph.read_from_csv_file_node(graph_file)
 NUM_PARTITIONS_AXIS = 10
 
 
-def bidirectional_dijkstra(graph: Graph, start_node: Node, end_node: Node): 
+def bidirectional_dijkstra(graph: Graph, start_node: Node, end_node: Node):
     """
         Runs a bidirectional Dijkstra's algorithm between start_node and end_node
     Input:
@@ -99,7 +99,7 @@ def bidirectional_dijkstra(graph: Graph, start_node: Node, end_node: Node):
             print("Trigger 6")
             # return (set_f, set_b)
             return (path_f, path_b)
-    
+
     print("Something badly wrong happened")
 
 
@@ -110,7 +110,7 @@ def rectangular_partition(graph: Graph) -> tuple[list[float], list[float]]:
         graph Graph : A graph object with node keys and a dictionary as value storing other
             Node neighbors and weight
     Output:
-        tuple[list[float], list[float]] : Defines a first and second list to mark points along 
+        tuple[list[float], list[float]] : Defines a first and second list to mark points along
             the x and y axes respectively as partition lines
     """
     # Width and height of farthest nodes in graph
@@ -171,7 +171,7 @@ def get_node_region(
     return (node_x_region, node_y_region)
 
 
-def preprocess_graph(graph : Graph) -> Graph:
+def preprocess_graph(graph: Graph) -> Graph:
     """
         Preprocesses a graph with arc-flags such that each edge has the appropriate arc-flags
             vector set. The arc-flags vector has n-regions and for each element n_i if it is true
@@ -199,6 +199,7 @@ def preprocess_graph(graph : Graph) -> Graph:
     for edge_node in edge_nodes:
         # bidirectional_dijkstra
         pass
+
 
 print("testing...")
 
