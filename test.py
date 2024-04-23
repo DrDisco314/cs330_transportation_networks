@@ -26,7 +26,7 @@ class TestGraphAndDijkstra(unittest.TestCase):
         Return:
             None
         """
-        graph_file = "Data/WashingtonDC_Edgelist.csv"
+        graph_file = "Data/SaoPaolo_Edgelist.csv"
         self.graph = myGraph()
         self.graph.read_from_csv_file(graph_file)
         self.myDijkstra = Dijkstra(self.graph)
