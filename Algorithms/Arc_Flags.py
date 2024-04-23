@@ -241,24 +241,3 @@ print(f"transition_vertex: {transition_vertex}")
 path = reconstruct_shortest_path(predecessors_f, predecessors_b, transition_vertex)
 print("path")
 print(path)
-
-# for node in predecessors_f:
-#     path_f.append(node.value)
-#     if node == transition_vertex: break
-
-
-# for node in predecessors_b:
-#     path_b.append(node.value)
-#     if node == transition_vertex: break
-
-<<<<<<< HEAD
-# print("Forward path...")
-# print(f"Path_f: {path_f}")
-# print()
-# print("Backward path...")
-# print(f"Path_b: {path_b}")
-=======
-print()
-for node in path_b:
-    print(node)
->>>>>>> c84cd11828ae4518410de1be04f4dc8ef2ed61b9
