@@ -33,7 +33,11 @@ class Node:
     def __repr__(self):
         return f"Node {self.value} ({self.xcoord}, {self.ycoord})"
 
-    def __lt__(self, other): # for <
+    # Cite: https://stackoverflow.com/questions/53554199/heapq-push-typeerror-not-supported-between-instances
+    # Description: An evil error was occuring when pushing tuples of (distance, Node) onto the priority
+    #              queue for dijkstra's algorithm due to multiple entries having the same distance. To resolve
+    #              this, Nodes need the < comparison operator implemented to determine order of priority queue.
+    def __lt__(self, other):
         return self.value < other.value
 
 
