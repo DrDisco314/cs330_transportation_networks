@@ -42,6 +42,23 @@ class TestGraphAndDijkstra(unittest.TestCase):
             for neighbor, weight in neighbors.items():
                 self.dijkstar_graph.add_edge(node, neighbor, weight)
 
+    def a_star_cost_function(self, u, v, edge, prev_edge):
+        if isinstance(edge, tuple):
+            length, name = edge
+        else:
+            length = edge  # Only length is provided, no name
+            name = None  # Default or dummy name
+
+        if prev_edge and isinstance(prev_edge, tuple):
+            prev_length, prev_name = prev_edge
+        else:
+            prev_name = None
+
+        cost = length
+        if name != prev_name:
+            cost += 10  # Additional cost for changing routes or similar logic
+        return cost
+
     def test_graph_structure(self):
         """
         Test the graph class to ensure functioning as expected.
@@ -70,6 +87,12 @@ class TestGraphAndDijkstra(unittest.TestCase):
                     dijkstrar_path_info = find_path(
                         self.dijkstar_graph, start_node, end_node
                     )
+                    astar_path_info = find_path(
+                        self.dijkstar_graph,
+                        start_node,
+                        end_node,
+                        cost_func=self.a_star_cost_function,
+                    )
                     ch_path_info = self.myCH.find_shortest_path(start_node, end_node)
                     self.assertIsNotNone(dijkstrar_path_info.nodes)
                     self.assertEqual(
@@ -93,12 +116,15 @@ class TestGraphAndDijkstra(unittest.TestCase):
         """
 
         print(
-            "{:<15} {:<10} {:<10}".format(
-                "Path Length", "Dijkstar Time (ms)", "Contraction Heirachies (ms)"
+            "{:<15} {:<10} {:<10} {:<10}".format(
+                "Path Length",
+                "Dijkstar Time (ms)",
+                "Contraction Heirachies (ms)",
+                "A* (MS)",
             )
         )
 
-        for i in range(1, 15):
+        for i in range(1, 4):
             path_length = 0
             starting_node = 1
             ending_node = 1
@@ -116,6 +142,7 @@ class TestGraphAndDijkstra(unittest.TestCase):
                     continue
             dij_time_list = []
             ch_time_list = []
+            astar_time_list = []
             for j in range(5):
                 dij_start_time = time.time()
                 self.myDijkstra.find_shortest_path(starting_node, ending_node)
@@ -129,9 +156,23 @@ class TestGraphAndDijkstra(unittest.TestCase):
                 ch_time = (ch_end_time - ch_start_time) * 1000
                 ch_time_list.append(ch_time)
 
+                astar_start_time = time.time()
+                find_path(
+                    self.dijkstar_graph,
+                    starting_node,
+                    ending_node,
+                    cost_func=self.a_star_cost_function,
+                )
+                astar_end_time = time.time()
+                astar_time = (astar_end_time - astar_start_time) * 1000
+                astar_time_list.append(astar_time)
+
             print(
-                "{:<15} {:<10.2f} {:<10.2f}".format(
-                    path_length, mean(dij_time_list), mean(ch_time_list)
+                "{:<15} {:<10.2f} {:<10.2f} {:<10.2f}".format(
+                    path_length,
+                    mean(dij_time_list),
+                    mean(ch_time_list),
+                    mean(astar_time_list),
                 )
             )
 
@@ -142,6 +183,6 @@ if __name__ == "__main__":
 
     # Specfic Tests:
     suite = unittest.TestSuite()
-    suite.addTest(TestGraphAndDijkstra("test_Algorithm_time"))
+    suite.addTest(TestGraphAndDijkstra("test_shortest_path"))
     runner = unittest.TextTestRunner()
     runner.run(suite)
