@@ -26,7 +26,7 @@ class TestGraphAndDijkstra(unittest.TestCase):
         Return:
             None
         """
-        graph_file = "Data/SaoPaolo_Edgelist.csv"
+        graph_file = "Data/NewYork_Edgelist.csv"
         self.graph = myGraph()
         self.graph.read_from_csv_file(graph_file)
         self.myDijkstra = Dijkstra(self.graph)
@@ -100,6 +100,7 @@ class TestGraphAndDijkstra(unittest.TestCase):
                         dijkstrar_path_info.nodes,
                         ch_path_info,
                     )
+                    self.assertEqual(astar_path_info, dijkstrar_path_info)
                 except NoPathError:
                     self.assertIsNone(
                         self.myDijkstra.find_shortest_path(start_node, end_node)
