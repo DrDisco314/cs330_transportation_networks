@@ -71,6 +71,7 @@ class CH:
             self.edges["to"],
             self.edges[["weight"]],
         )
+        self.graph_network.precompute(3000)
 
     def find_shortest_path(self, start_node: int, end_node: int) -> list[int]:
         """
