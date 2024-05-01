@@ -12,9 +12,10 @@ import unittest
 from statistics import mean
 from dijkstar import Graph as DijkstarGraph, find_path, NoPathError
 from src.graph import Graph as myGraph
+from src.graph import Node
 from Algorithms.Dijkstra import Dijkstra
 from Algorithms.CH import CH
-from Algorithms.Arc_Flags import ArcFlags
+from Algorithms.Arc_Flags import *
 import time
 import math
 
@@ -35,6 +36,16 @@ class TestGraphAndDijkstra(unittest.TestCase):
         self.myDijkstra = Dijkstra(self.graph)
         self.myCH = CH(graph_file)
 
+        self.arcFlagGraph = myGraph()
+        self.arcFlagGraph.num_partitions_axis = 10
+        self.arcFlagGraph.read_from_csv_file_node(graph_file)
+        self.arc_nodes = list(self.arcFlagGraph.graph.keys())
+
+        self.arc_flags = ArcFlags(self.arcFlagGraph)
+        print("Preprocessing Arc Flags...")
+        self.arc_flags.preprocess_graph()
+        print("Arc Flag Preprocessing Done.")
+
         # Convert to Dijkstar graph
         """
         Citation: https://pypi.org/project/Dijkstar/
@@ -48,7 +59,7 @@ class TestGraphAndDijkstra(unittest.TestCase):
     def euclidean_distance(self, cur_node, end_node):
         x1, y1 = cur_node[0], cur_node[1]
         x2, y2 = end_node[0], end_node[1]
-        return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+        return math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
     def a_star_cost_function(self, u, v, edge, prev_edge):
         if isinstance(edge, tuple):
@@ -100,22 +111,19 @@ class TestGraphAndDijkstra(unittest.TestCase):
                         start_node,
                         end_node,
                         cost_func=self.a_star_cost_function,
-                        heuristic_func=self.euclidean_distance
+                        heuristic_func=self.euclidean_distance,
                     )
-                    ch_path_info = self.myCH.find_shortest_path(
-                        start_node, end_node)
+                    ch_path_info = self.myCH.find_shortest_path(start_node, end_node)
                     self.assertIsNotNone(dijkstrar_path_info.nodes)
                     self.assertEqual(
-                        self.myDijkstra.find_shortest_path(
-                            start_node, end_node),
+                        self.myDijkstra.find_shortest_path(start_node, end_node),
                         dijkstrar_path_info.nodes,
                         ch_path_info,
                     )
                     self.assertEqual(astar_path_info, dijkstrar_path_info)
                 except NoPathError:
                     self.assertIsNone(
-                        self.myDijkstra.find_shortest_path(
-                            start_node, end_node)
+                        self.myDijkstra.find_shortest_path(start_node, end_node)
                     )
                     self.assertIsNot(True, ch_path_info)
 
@@ -145,8 +153,7 @@ class TestGraphAndDijkstra(unittest.TestCase):
                 try:
                     ending_node += 1
                     # ch_start_time = time.time()
-                    path_info = self.myCH.find_shortest_path(
-                        starting_node, ending_node)
+                    path_info = self.myCH.find_shortest_path(starting_node, ending_node)
                     # ch_end_time = time.time()
                     path_length = len(path_info)
 
