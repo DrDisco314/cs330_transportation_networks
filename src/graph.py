@@ -82,7 +82,7 @@ class Graph:
         Input:
             Node1 (int) : Integer representing first node.
             Node2 (int) : Intger representing second node
-            weight (int) : Integer representing weight of edge from 2 nodes.
+            weight (float) : float representing weight of edge from 2 nodes.
         Return:
             None
         """
@@ -97,11 +97,11 @@ class Graph:
 
     def add_edge_node(self, node1: Node, node2: Node, weight: float):
         """
-        Adds the edge from one node to another.
+        Adds the Edge from one node to another.
         Input:
-            Node1 (int) : Integer representing first node.
-            Node2 (int) : Intger representing second node
-            weight (int) : Integer representing weight of edge from 2 nodes.
+            Node1 (Node) : Node representing source of Edge.
+            Node2 (int) : Node representing destination of Edge.
+            weight (float) : float representing weight of Edge from 2 nodes.
         Return:
             None
         """
@@ -111,6 +111,7 @@ class Graph:
             self.graph[node2] = {}
 
         # Symetric Implementation. Number of partitions true for rectangular partition.
+        # Add edge with memory for arc flags determined by number of regions in partition
         self.graph[node1][node2] = Edge(weight, self.num_partitions_axis ** 2)
         self.graph[node2][node1] = Edge(weight, self.num_partitions_axis ** 2)
 
@@ -120,7 +121,7 @@ class Graph:
         Input:
             graph Graph : A graph object with node keys and a dictionary as value storing other
                 Node neighbors and weight
-        Output:
+        Return:
             tuple[list[float], list[float]] : Defines a first and second list to mark points along
                 the x and y axes respectively as partition lines
         """
@@ -156,14 +157,14 @@ class Graph:
             node Node : Node to get region of
             paritions tuple[list[float], list[float]] : The rectangular parition points along the graph to
                 be compared with node's coordinates
-        Output:
+        Return:
             tuple[int, int] : The region that the node belongs to stored as (x Region, y region) where
             (0, 0) is the first rectangular region
         """
         # Get x-axis partition poiints and determine partition size
         width_partitions = partitions[0]
         w_partition_size = width_partitions[1] - width_partitions[0]
-
+        
         node_x_region = None
         # check node coordinate with x partition points till node is within parition region
         for idx, partition in enumerate(width_partitions):
@@ -179,7 +180,7 @@ class Graph:
 
         height_partitions = partitions[1]
         h_partition_size = height_partitions[1] - height_partitions[0]
-
+        
         node_y_region = None
         for idx, partition in enumerate(height_partitions):
             if (node.ycoord <= partition and node.ycoord >= (partition - h_partition_size) or
@@ -191,7 +192,14 @@ class Graph:
 
         return (node_x_region, node_y_region)
 
-    def process_nodes(self, filename: str):
+    def process_nodes(self, filename: str) -> list[Node]:
+        """
+        Processes the nodes in filename as Node objects
+        input:
+            filanme str: String of file to process nodes from
+        Return:
+            nodes list[Node] : List of processed nodes
+        """
         nodes = {}
         try:
             with open(filename, newline="") as file:
@@ -213,7 +221,14 @@ class Graph:
         except Exception as e:
             print(f"An error occurred: {e}")
 
-    def partition_nodes(self, nodes):
+    def partition_nodes(self, nodes: list[Node]) -> list[Node]:
+        """
+        Uses a rectangular partition to assign each node in nodes to a region.
+        input:
+            nodes list[Node] : List of nodes to be assigned region by partition function
+        Returns:
+            nodes list[Node] : List node nodes with assigned region
+        """
     
         partitions = self.rectangular_partition()
         for node in nodes.values():

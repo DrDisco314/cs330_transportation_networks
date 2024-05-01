@@ -14,9 +14,6 @@ graph = Graph()
 graph.num_partitions_axis = 10
 graph.read_from_csv_file_node(graph_file)
 
-graph = preprocess_graph(graph)
-print("preprocessing done...")
-
 ### Testing arc-flags dijkstra
 nodes = list(graph.graph.keys())
 source = 761
@@ -27,7 +24,12 @@ for node in nodes:
     if node.value == target:
         target = node
 
-shortest_path = arc_flags_dijkstra(graph, source, target)
+arc_flags = ArcFlags(graph)
+arc_flags.preprocess_graph()
+print("preprocessing done...")
+
+
+shortest_path = arc_flags.arc_flags_dijkstra(source, target)
 print(f"shortest_path: {shortest_path}")
 
 
