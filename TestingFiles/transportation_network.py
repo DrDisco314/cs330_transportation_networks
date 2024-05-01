@@ -17,9 +17,9 @@ def main():
     # start_node = 8
     # end_node = 25
 
-    graph_file = "Data/NewYork_Edgelist.csv"
-    start_node = 269071
-    end_node = 809837
+    graph_file = "Data/Surat_Edgelist.csv"
+    start_node = 761
+    end_node = 6819
 
     graph = Graph()
     graph.read_from_csv_file(graph_file)

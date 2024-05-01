@@ -27,7 +27,8 @@ class TestGraphAndDijkstra(unittest.TestCase):
         Return:
             None
         """
-        graph_file = "Data/SaoPaolo_Edgelist.csv"
+        name = "Baghdad"
+        graph_file = f"Data/{name}_Edgelist.csv"
         self.graph = myGraph()
         self.graph.read_from_csv_file(graph_file)
         self.myDijkstra = Dijkstra(self.graph)
@@ -43,7 +44,7 @@ class TestGraphAndDijkstra(unittest.TestCase):
             for neighbor, weight in neighbors.items():
                 self.dijkstar_graph.add_edge(node, neighbor, weight)
 
-    def euclidean_distance(cur_node, end_node):
+    def euclidean_distance(self, cur_node, end_node):
         x1, y1 = cur_node[0], cur_node[1]
         x2, y2 = end_node[0], end_node[1]
         return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
@@ -98,6 +99,7 @@ class TestGraphAndDijkstra(unittest.TestCase):
                         start_node,
                         end_node,
                         cost_func=self.a_star_cost_function,
+                        heuristic_func=self.euclidean_distance
                     )
                     ch_path_info = self.myCH.find_shortest_path(
                         start_node, end_node)
@@ -108,6 +110,7 @@ class TestGraphAndDijkstra(unittest.TestCase):
                         dijkstrar_path_info.nodes,
                         ch_path_info,
                     )
+                    self.assertEqual(astar_path_info, dijkstrar_path_info)
                 except NoPathError:
                     self.assertIsNone(
                         self.myDijkstra.find_shortest_path(
@@ -133,7 +136,7 @@ class TestGraphAndDijkstra(unittest.TestCase):
             )
         )
 
-        for i in range(1, 4):
+        for i in range(1, 15):
             path_length = 0
             starting_node = 1
             ending_node = 1
@@ -178,7 +181,7 @@ class TestGraphAndDijkstra(unittest.TestCase):
                 astar_time_list.append(astar_time)
 
             print(
-                "{:<15} {:<10.2f} {:<10.2f} {:<10.2f}".format(
+                "{:<15} {:<10.3f} {:<10.3f} {:<10.3f}".format(
                     path_length,
                     mean(dij_time_list),
                     mean(ch_time_list),
@@ -193,6 +196,6 @@ if __name__ == "__main__":
 
     # Specfic Tests:
     suite = unittest.TestSuite()
-    suite.addTest(TestGraphAndDijkstra("test_shortest_path"))
+    suite.addTest(TestGraphAndDijkstra("test_Algorithm_time"))
     runner = unittest.TextTestRunner()
     runner.run(suite)
