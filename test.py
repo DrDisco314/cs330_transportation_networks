@@ -14,6 +14,7 @@ from dijkstar import Graph as DijkstarGraph, find_path, NoPathError
 from src.graph import Graph as myGraph
 from Algorithms.Dijkstra import Dijkstra
 from Algorithms.CH import CH
+from Algorithms.Arc_Flags import ArcFlags
 import time
 import math
 
