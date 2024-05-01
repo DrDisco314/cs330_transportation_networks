@@ -40,48 +40,6 @@ class Node:
     def __lt__(self, other):
         return self.value < other.value
 
-    def get_node_region(self, partitions: tuple[list[float], list[float]]) -> tuple[int, int]:
-        """
-        Returns the region that a node belongs to
-        Input:
-            node Node : Node to get region of
-            paritions tuple[list[float], list[float]] : The rectangular parition points along the graph to
-                be compared with node's coordinates
-        Output:
-            tuple[int, int] : The region that the node belongs to stored as (x Region, y region) where
-            (0, 0) is the first rectangular region
-        """
-        # Get x-axis partition poiints and determine partition size
-        width_partitions = partitions[0]
-        w_partition_size = width_partitions[1] - width_partitions[0]
-
-        node_x_region = None
-        # check node coordinate with x partition points till node is within parition region
-        for idx, partition in enumerate(width_partitions):
-            if (self.xcoord <= partition and self.xcoord >= (partition - w_partition_size) or
-                self.xcoord == partition):
-                node_x_region = idx
-
-            # Precision in coordinates makes for rounding issues in some coordinates. If coordinates
-            # is past last partition line place in the final partition region to maintain desired number
-            # of partition regions.
-            if node_x_region == None:
-                node_x_region = len(width_partitions) - 1
-
-        height_partitions = partitions[1]
-        h_partition_size = height_partitions[1] - height_partitions[0]
-
-        node_y_region = None
-        for idx, partition in enumerate(height_partitions):
-            if (self.ycoord <= partition and self.ycoord >= (partition - h_partition_size) or
-                self.ycoord == partition):
-                node_y_region = idx
-
-            if node_y_region == None:
-                node_y_region = len(height_partitions) - 1
-
-        return (node_x_region, node_y_region)
-
 
 class Edge:
     def __init__(self, weight: float, num_flags: int):
@@ -190,6 +148,79 @@ class Graph:
 
         return (width_partitions, height_partitions)
 
+    def get_node_region(self, partitions: tuple[list[float], list[float]], node: Node
+        ) -> tuple[int, int]:
+        """
+        Returns the region that a node belongs to
+        Input:
+            node Node : Node to get region of
+            paritions tuple[list[float], list[float]] : The rectangular parition points along the graph to
+                be compared with node's coordinates
+        Output:
+            tuple[int, int] : The region that the node belongs to stored as (x Region, y region) where
+            (0, 0) is the first rectangular region
+        """
+        # Get x-axis partition poiints and determine partition size
+        width_partitions = partitions[0]
+        w_partition_size = width_partitions[1] - width_partitions[0]
+
+        node_x_region = None
+        # check node coordinate with x partition points till node is within parition region
+        for idx, partition in enumerate(width_partitions):
+            if (node.xcoord <= partition and node.xcoord >= (partition - w_partition_size) or
+                node.xcoord == partition):
+                node_x_region = idx
+
+            # Precision in coordinates makes for rounding issues in some coordinates. If coordinates
+            # is past last partition line place in the final partition region to maintain desired number
+            # of partition regions.
+            if node_x_region == None:
+                node_x_region = len(width_partitions) - 1
+
+        height_partitions = partitions[1]
+        h_partition_size = height_partitions[1] - height_partitions[0]
+
+        node_y_region = None
+        for idx, partition in enumerate(height_partitions):
+            if (node.ycoord <= partition and node.ycoord >= (partition - h_partition_size) or
+                node.ycoord == partition):
+                node_y_region = idx
+
+            if node_y_region == None:
+                node_y_region = len(height_partitions) - 1
+
+        return (node_x_region, node_y_region)
+
+    def process_nodes(self, filename: str):
+        nodes = {}
+        try:
+            with open(filename, newline="") as file:
+                reader = csv.DictReader(file)
+                for row in reader:
+                    node = Node(int(row["START_NODE"]))
+                    node.xcoord = float(row["XCoord"])
+                    node.ycoord = float(row["YCoord"])
+
+                    if node not in nodes:
+                        nodes[int(row["START_NODE"])] = node
+                    else:
+                        continue
+                return nodes
+            
+
+        except FileNotFoundError:
+            print(f"Error: File '{filename}' not found.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+    def partition_nodes(self, nodes):
+    
+        partitions = self.rectangular_partition()
+        for node in nodes.values():
+            node.region = self.get_node_region(partitions, node)
+           
+        return nodes
+
     def read_from_mtx_file(self, filename: str):
         """
         Reads in a file in the form of matrix where nodes are in the same line. Weight is the abs(node1-node2)
@@ -236,38 +267,6 @@ class Graph:
             print(f"Error: File '{filename}' not found.")
         except Exception as e:
             print(f"An error occurred: {e}")
-
-    def process_nodes(self, filename: str):
-        nodes = {}
-        try:
-            with open(filename, newline="") as file:
-                reader = csv.DictReader(file)
-                for row in reader:
-                    node = Node(int(row["START_NODE"]))
-                    node.xcoord = float(row["XCoord"])
-                    node.ycoord = float(row["YCoord"])
-
-                    if node not in nodes:
-                        nodes[int(row["START_NODE"])] = node
-                    else:
-                        continue
-                return nodes
-            
-
-        except FileNotFoundError:
-            print(f"Error: File '{filename}' not found.")
-        except Exception as e:
-            print(f"An error occurred: {e}")
-
-
-    def partition_nodes(self, nodes):
-    
-        partitions = self.rectangular_partition()
-        for node in nodes.values():
-            node.region = node.get_node_region(partitions)
-           
-        return nodes
-        
 
     def read_from_csv_file_node(self, filename: str):
         """
