@@ -40,6 +40,48 @@ class Node:
     def __lt__(self, other):
         return self.value < other.value
 
+    def get_node_region(self, partitions: tuple[list[float], list[float]]) -> tuple[int, int]:
+        """
+        Returns the region that a node belongs to
+        Input:
+            node Node : Node to get region of
+            paritions tuple[list[float], list[float]] : The rectangular parition points along the graph to
+                be compared with node's coordinates
+        Output:
+            tuple[int, int] : The region that the node belongs to stored as (x Region, y region) where
+            (0, 0) is the first rectangular region
+        """
+        # Get x-axis partition poiints and determine partition size
+        width_partitions = partitions[0]
+        w_partition_size = width_partitions[1] - width_partitions[0]
+
+        node_x_region = None
+        # check node coordinate with x partition points till node is within parition region
+        for idx, partition in enumerate(width_partitions):
+            if (self.xcoord <= partition and self.xcoord >= (partition - w_partition_size) or
+                self.xcoord == partition):
+                node_x_region = idx
+
+            # Precision in coordinates makes for rounding issues in some coordinates. If coordinates
+            # is past last partition line place in the final partition region to maintain desired number
+            # of partition regions.
+            if node_x_region == None:
+                node_x_region = len(width_partitions) - 1
+
+        height_partitions = partitions[1]
+        h_partition_size = height_partitions[1] - height_partitions[0]
+
+        node_y_region = None
+        for idx, partition in enumerate(height_partitions):
+            if (self.ycoord <= partition and self.ycoord >= (partition - h_partition_size) or
+                self.ycoord == partition):
+                node_y_region = idx
+
+            if node_y_region == None:
+                node_y_region = len(height_partitions) - 1
+
+        return (node_x_region, node_y_region)
+
 
 class Edge:
     def __init__(self, weight: float, num_flags: int):
@@ -53,6 +95,12 @@ class Edge:
         self.weight = weight
         self.arc_flags = [False for _ in range(num_flags)]
 
+    def __str__(self):
+        return f"{self.weight}"
+
+    def __repr__(self):
+        return f"{self.weight}"
+
 
 class Graph:
     def __init__(self):
@@ -64,6 +112,7 @@ class Graph:
             None
         """
         self.graph = {}
+        self.num_partitions_axis = None
         self.smallest_x_node = None
         self.smallest_y_node = None
         self.largest_x_node = None
@@ -103,9 +152,43 @@ class Graph:
         if node2 not in self.graph:
             self.graph[node2] = {}
 
-        # Symetric Implementation
-        self.graph[node1][node2] = weight
-        self.graph[node2][node1] = weight
+        # Symetric Implementation. Number of partitions true for rectangular partition.
+        self.graph[node1][node2] = Edge(weight, self.num_partitions_axis ** 2)
+        self.graph[node2][node1] = Edge(weight, self.num_partitions_axis ** 2)
+
+    def rectangular_partition(self) -> tuple[list[float], list[float]]:
+        """
+        Creates partitions in coordinate space to break a graph into rectangular region
+        Input:
+            graph Graph : A graph object with node keys and a dictionary as value storing other
+                Node neighbors and weight
+        Output:
+            tuple[list[float], list[float]] : Defines a first and second list to mark points along
+                the x and y axes respectively as partition lines
+        """
+        # Width and height of farthest nodes in graph
+        width = self.largest_x_node.xcoord - self.smallest_x_node.xcoord
+        height = self.largest_y_node.ycoord - self.smallest_y_node.ycoord
+
+        partitions = []
+
+        # Get partition popints along x axis
+        width_partitions = []
+        w_partition_size = width / self.num_partitions_axis
+        current_parition = self.smallest_x_node.xcoord
+        for width_partition in range(self.num_partitions_axis):
+            current_parition += w_partition_size
+            width_partitions.append(current_parition)
+
+        # Get partition popints along y axis
+        height_partitions = []
+        h_partition_size = height / self.num_partitions_axis
+        current_parition = self.smallest_y_node.ycoord
+        for height_partition in range(self.num_partitions_axis):
+            current_parition += h_partition_size
+            height_partitions.append(current_parition)
+
+        return (width_partitions, height_partitions)
 
     def read_from_mtx_file(self, filename: str):
         """
@@ -168,13 +251,23 @@ class Graph:
                         nodes[int(row["START_NODE"])] = node
                     else:
                         continue
-
-            return nodes
+                return nodes
+            
 
         except FileNotFoundError:
             print(f"Error: File '{filename}' not found.")
         except Exception as e:
             print(f"An error occurred: {e}")
+
+
+    def partition_nodes(self, nodes):
+    
+        partitions = self.rectangular_partition()
+        for node in nodes.values():
+            node.region = node.get_node_region(partitions)
+           
+        return nodes
+        
 
     def read_from_csv_file_node(self, filename: str):
         """
@@ -200,13 +293,16 @@ class Graph:
             processed_nodes.values(), key=lambda node: node.ycoord
         )
 
+        # Set the region of each node using a partition function
+        partioned_nodes = self.partition_nodes(processed_nodes)
+
         try:
             with open(filename, newline="") as file:
                 reader = csv.DictReader(file)
                 for row in reader:
-                    start_node = processed_nodes[int(row["START_NODE"])]
-                    end_node = processed_nodes[int(row["END_NODE"])]
-                    self.add_edge(
+                    start_node = partioned_nodes[int(row["START_NODE"])]
+                    end_node = partioned_nodes[int(row["END_NODE"])]
+                    self.add_edge_node(
                         start_node,
                         end_node,
                         float(row["LENGTH"]),
