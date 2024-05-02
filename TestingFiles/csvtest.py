@@ -9,15 +9,19 @@ from Algorithms.Dijkstra import Dijkstra
 
 def main():
     start_node = 1
-    end_node = 46
+    end_node = 5
     mygraph = Graph()
 
-    name = "Baghdad"
-    mygraph.read_from_csv_file("Data/{name}_Edgelist.csv")
+    name = "Surat"
+    mygraph.read_from_csv_file(f"Data/{name}_Edgelist.csv")
 
     dijkstra = Dijkstra(mygraph)
     start = time.time()
+    # while KeyError:
+    #     try:
     shortest_path = dijkstra.find_shortest_path(start_node, end_node)
+    # except:
+    # end_node += 1
     end = time.time()
     print(f"Time taken: {(end-start)*1000} (ms)")
     (
