@@ -38,23 +38,26 @@ def preprocess(name):
 
 
 def test_instance_pickle():
-
-    graph_file = "Data/Surat_Edgelist.csv"
+    name = "Surat"
+    graph_file = f"Data/{name}_Edgelist.csv"
     graph = Graph()
+    graph.num_partitions_axis = 2
     graph.read_from_csv_file_node(graph_file)
     source = 1
     target = 5
+    nodes = list(graph.graph.keys())
     for node in nodes:
         if node.value == source:
             source = node
         if node.value == target:
             target = node
     print("Loading Pickle...")
-    arc_flag = pickle.load("ArcFlagInstances/Surat_object.pkl")
+    with open(f"ArcFlagInstances/{name}_object.pkl", "rb") as filehandler:
+        arc_flag = pickle.load(filehandler)
     if arc_flag == None:
         print("Uh oh")
     print("Instance Loaded...")
-    shortest_path = arc_flags.arc_flags_dijkstra(source, target)
+    shortest_path = arc_flag.arc_flags_dijkstra(source, target)
     print(f"shortest_path: {shortest_path}")
 
 
