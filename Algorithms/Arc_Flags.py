@@ -27,7 +27,6 @@ class ArcFlags:
         Return:
             None
         """
-        print(type(graph))
         self.graph = graph
 
     def print_progress(self, current_index, total_entries):
