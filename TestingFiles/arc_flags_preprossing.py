@@ -63,7 +63,7 @@ def straight_up():
 
 def test_instance_pickle(name):
     source_id = 1
-    target_id = 15
+    target_id = 25
     source_node = None
     target_node = None
 

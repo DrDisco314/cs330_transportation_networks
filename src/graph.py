@@ -365,12 +365,6 @@ class Graph:
         """
         return self.graph.get(node, {})
 
-    def get_node(self, target):
-        for key in self.graph:
-            if key.value == target.value:
-                return key
-        return None
-
     def return_graph(self) -> dict:
         """
         Return the graph.

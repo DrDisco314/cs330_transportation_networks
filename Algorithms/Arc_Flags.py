@@ -111,8 +111,6 @@ class ArcFlags:
         return path[::-1]
 
     def arc_flags_dijkstra(self, source, target):
-        source = self.graph.get_node(source)
-        target = self.graph.get_node(target)
 
         # Initialize parameters
         distances = {node: float("infinity") for node in self.graph.graph}
