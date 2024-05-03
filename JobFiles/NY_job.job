@@ -8,12 +8,14 @@
 #PBS -l walltime=72:30:00      
 #PBS -r y
 
-echo "Job started on $(hostname) at $(date)"
+echo "Job started on"
+date
 
-cd $PBS_O_WORKDIR/cs330_transportation_networks
+cd cs330_transportation_networks
 
-module load python/3.11
+module load --module name here--
 
 python PreprocessingFiles/NewYork_preprocessing.py
 
-echo "Job ended at $(date)"
+echo "Job ended at "
+date
