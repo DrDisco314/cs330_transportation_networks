@@ -16,6 +16,7 @@ sys.path.append("../cs330_transportation_networks")
 from src.graph import Graph, Node, Edge
 from Algorithms.Bidirectional_Dijkstra import BidirectionalDijkstra
 
+
 class ArcFlags:
     def __init__(self, graph: dict[Node, dict[Node, Edge]]):
         """
@@ -26,15 +27,14 @@ class ArcFlags:
         Return:
             None
         """
+        print(type(graph))
         self.graph = graph
-
 
     def print_progress(self, current_index, total_entries):
         percent_finished = (current_index + 1) / total_entries * 100
         print()
         print(f"Preprocessing: {percent_finished:.0f}% done.")
         print()
-
 
     def preprocess_graph(self):
         """
@@ -66,13 +66,15 @@ class ArcFlags:
             self.print_progress(index, len(edge_nodes))
             for node in nodes:
                 node_region = node.region
-                arc_flag_index = node_region[0] + (node_region[1] * self.graph.num_partitions_axis)
+                arc_flag_index = node_region[0] + (
+                    node_region[1] * self.graph.num_partitions_axis
+                )
                 node_neighbors = self.graph.graph[node]
 
                 # Every edge from a node by definition has the node's region arc flag set
                 for neighbor in node_neighbors:
                     self.graph.graph[node][neighbor].arc_flags[arc_flag_index] = True
-                
+
                 # Try doing a bidirectional dijkstra between every node and edge node to set arc flags
                 try:
                     shortest_path = bi_dijkstra.bidirectional_dijkstra(node, edge_node)
@@ -81,13 +83,17 @@ class ArcFlags:
                     # set the arc-flags along the shortest path corresponding to the edge node's reigon
                     for i in range(len(shortest_path) - 1):
                         # Take (x, y) region and get index by taking nth region
-                        arc_flag_index = edge_node_region[0] + (edge_node_region[1] * self.graph.num_partitions_axis)
-                        self.graph.graph[shortest_path[i]][shortest_path[i+1]].arc_flags[arc_flag_index] = True
-                
+                        arc_flag_index = edge_node_region[0] + (
+                            edge_node_region[1] * self.graph.num_partitions_axis
+                        )
+                        self.graph.graph[shortest_path[i]][
+                            shortest_path[i + 1]
+                        ].arc_flags[arc_flag_index] = True
+
                 # No shortest path could be found, no arc flags to update
                 except:
-                    pass                
-    
+                    pass
+
     def get_shortest_path(self, end_node, predecessors):
         """
         Returns the shortests path from end node to the start node.
@@ -105,15 +111,18 @@ class ArcFlags:
             return None
         return path[::-1]
 
-
     def arc_flags_dijkstra(self, source, target):
-        
+        source = self.graph.get_node(source)
+        target = self.graph.get_node(target)
+
         # Initialize parameters
         distances = {node: float("infinity") for node in self.graph.graph}
         distances[source] = 0
         predecessors = {node: None for node in self.graph.graph}
         target_region = target.region
-        arc_flag_index = target_region[0] + (target_region[1] * self.graph.num_partitions_axis)
+        arc_flag_index = target_region[0] + (
+            target_region[1] * self.graph.num_partitions_axis
+        )
 
         print(f"Source node: {source}")
         print(f"Source node region: {source.region}")
@@ -146,4 +155,4 @@ class ArcFlags:
                         predecessors[neighbor] = current_node
                         heapq.heappush(priority_queue, (distance, neighbor))
 
-        return get_shortest_path(target, predecessors)
+        return self.get_shortest_path(target, predecessors)

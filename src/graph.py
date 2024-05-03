@@ -112,8 +112,8 @@ class Graph:
 
         # Symetric Implementation. Number of partitions true for rectangular partition.
         # Add edge with memory for arc flags determined by number of regions in partition
-        self.graph[node1][node2] = Edge(weight, self.num_partitions_axis ** 2)
-        self.graph[node2][node1] = Edge(weight, self.num_partitions_axis ** 2)
+        self.graph[node1][node2] = Edge(weight, self.num_partitions_axis**2)
+        self.graph[node2][node1] = Edge(weight, self.num_partitions_axis**2)
 
     def rectangular_partition(self) -> tuple[list[float], list[float]]:
         """
@@ -149,8 +149,9 @@ class Graph:
 
         return (width_partitions, height_partitions)
 
-    def get_node_region(self, partitions: tuple[list[float], list[float]], node: Node
-        ) -> tuple[int, int]:
+    def get_node_region(
+        self, partitions: tuple[list[float], list[float]], node: Node
+    ) -> tuple[int, int]:
         """
         Returns the region that a node belongs to
         Input:
@@ -164,12 +165,15 @@ class Graph:
         # Get x-axis partition poiints and determine partition size
         width_partitions = partitions[0]
         w_partition_size = width_partitions[1] - width_partitions[0]
-        
+
         node_x_region = None
         # check node coordinate with x partition points till node is within parition region
         for idx, partition in enumerate(width_partitions):
-            if (node.xcoord <= partition and node.xcoord >= (partition - w_partition_size) or
-                node.xcoord == partition):
+            if (
+                node.xcoord <= partition
+                and node.xcoord >= (partition - w_partition_size)
+                or node.xcoord == partition
+            ):
                 node_x_region = idx
 
             # Precision in coordinates makes for rounding issues in some coordinates. If coordinates
@@ -180,11 +184,14 @@ class Graph:
 
         height_partitions = partitions[1]
         h_partition_size = height_partitions[1] - height_partitions[0]
-        
+
         node_y_region = None
         for idx, partition in enumerate(height_partitions):
-            if (node.ycoord <= partition and node.ycoord >= (partition - h_partition_size) or
-                node.ycoord == partition):
+            if (
+                node.ycoord <= partition
+                and node.ycoord >= (partition - h_partition_size)
+                or node.ycoord == partition
+            ):
                 node_y_region = idx
 
             if node_y_region == None:
@@ -214,7 +221,6 @@ class Graph:
                     else:
                         continue
                 return nodes
-            
 
         except FileNotFoundError:
             print(f"Error: File '{filename}' not found.")
@@ -229,11 +235,11 @@ class Graph:
         Returns:
             nodes list[Node] : List node nodes with assigned region
         """
-    
+
         partitions = self.rectangular_partition()
         for node in nodes.values():
             node.region = self.get_node_region(partitions, node)
-           
+
         return nodes
 
     def read_from_mtx_file(self, filename: str):
@@ -358,6 +364,12 @@ class Graph:
             Dictionary with all neighbors as key and weights as value
         """
         return self.graph.get(node, {})
+
+    def get_node(self, target):
+        for key in self.graph:
+            if key.value == target.value:
+                return key
+        return None
 
     def return_graph(self) -> dict:
         """

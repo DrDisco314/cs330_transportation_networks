@@ -68,7 +68,8 @@ def test_instance_pickle():
     graph = Graph()
     graph.num_partitions_axis = 2
     graph.read_from_csv_file_node(f"Data/{name}_Edgelist.csv")
-
+    arc_flags = ArcFlags(graph)
+    print(f"Type: {type(arc_flags)}")
     # Set initial source and target IDs
     source_id = 1
     target_id = 15
@@ -108,8 +109,10 @@ def test_instance_pickle():
 
 
 def main():
-    for item in cities:
-        preprocess(item)
+    # for item in cities:
+    #     preprocess(item)
+    test_instance_pickle()
+    # preprocess("Surat")
 
 
 if __name__ == "__main__":
