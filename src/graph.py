@@ -374,3 +374,9 @@ class Graph:
             Dictionary of graph
         """
         return self.graph
+
+    def return_node(self, value):
+        for key in self.graph:
+            if key.value == value:
+                return key
+        return None

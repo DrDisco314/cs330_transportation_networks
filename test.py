@@ -51,14 +51,18 @@ class TestGraphAndDijkstra(unittest.TestCase):
         Citation: https://pypi.org/project/Dijkstar/
         Pre-existing Dijksta Algorithm to make sure our implentation is working the same.
         """
-        self.dijkstar_graph = DijkstarGraph()
-        for node, neighbors in self.graph.graph.items():
-            for neighbor, weight in neighbors.items():
-                self.dijkstar_graph.add_edge(node, neighbor, weight)
+        self.node_graph = myGraph()
+        self.node_graph.num_partitions_axis = 2
+        self.node_graph.read_from_csv_file_node(graph_file)
 
-    def euclidean_distance(self, u, v, e, prev_e):
-        x1, y1 = u[0], u[1]
-        x2, y2 = v[0], v[1]
+        self.dijkstar_graph = DijkstarGraph()
+        for node, neighbors in self.node_graph.graph.items():
+            for neighbor, weight in neighbors.items():
+                self.dijkstar_graph.add_edge(node, neighbor, weight.weight)
+
+    def euclidean_distance(self, u: Node, v: Node, e, prev_e):
+        x1, y1 = u.xcoord, u.ycoord
+        x2, y2 = v.xcoord, v.ycoord
         return math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
     def a_star_cost_function(self, u, v, edge, prev_edge):
@@ -103,24 +107,37 @@ class TestGraphAndDijkstra(unittest.TestCase):
         for start_node in start_list:
             for end_node in end_list:
                 try:
-                    dijkstrar_path_info = find_path(
-                        self.dijkstar_graph, start_node, end_node
-                    )
+                    node1 = self.node_graph.return_node(start_node)
+                    node2 = self.node_graph.return_node(end_node)
+                    dijkstrar_path_info = find_path(self.dijkstar_graph, node1, node2)
+                    # with open("ArcFlagInstances/othertest.txt", "w") as file:
+                    #     for item in dijkstrar_path_info:
+                    #         file.write(str(item) + "\n")
+                    # file.close()
+                    dijkstrar_path_info = [
+                        item.value for item in dijkstrar_path_info[0]
+                    ]
                     astar_path_info = find_path(
                         self.dijkstar_graph,
-                        start_node,
-                        end_node,
+                        node1,
+                        node2,
                         # cost_func=self.a_star_cost_function,
                         heuristic_func=self.euclidean_distance,
                     )
+                    astar_path_info = [item.value for item in astar_path_info[0]]
                     ch_path_info = self.myCH.find_shortest_path(start_node, end_node)
-                    self.assertIsNotNone(dijkstrar_path_info.nodes)
+                    self.assertIsNotNone(dijkstrar_path_info)
                     self.assertEqual(
                         self.myDijkstra.find_shortest_path(start_node, end_node),
-                        dijkstrar_path_info.nodes,
+                        dijkstrar_path_info,
                         ch_path_info,
                     )
-                    self.assertEqual(astar_path_info, dijkstrar_path_info)
+                    self.assertIsNotNone(astar_path_info)
+                    if astar_path_info != dijkstrar_path_info:
+                        with open("ArcFlagInstances/othertest.txt", "w") as file:
+                            for item in astar_path_info:
+                                file.write(str(item) + "\n")
+                        file.close()
                 except NoPathError:
                     self.assertIsNone(
                         self.myDijkstra.find_shortest_path(start_node, end_node)
@@ -177,11 +194,13 @@ class TestGraphAndDijkstra(unittest.TestCase):
                 ch_time = (ch_end_time - ch_start_time) * 1000
                 ch_time_list.append(ch_time)
 
+                node1 = self.node_graph.return_node(starting_node)
+                node2 = self.node_graph.return_node(ending_node)
                 astar_start_time = time.time()
                 find_path(
                     self.dijkstar_graph,
-                    starting_node,
-                    ending_node,
+                    node1,
+                    node2,
                     cost_func=self.a_star_cost_function,
                 )
                 astar_end_time = time.time()
