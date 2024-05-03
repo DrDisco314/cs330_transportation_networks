@@ -29,22 +29,22 @@ class TestGraphAndDijkstra(unittest.TestCase):
         Return:
             None
         """
-        name = "Baghdad"
+        name = "NewYork"
         graph_file = f"Data/{name}_Edgelist.csv"
         self.graph = myGraph()
         self.graph.read_from_csv_file(graph_file)
         self.myDijkstra = Dijkstra(self.graph)
         self.myCH = CH(graph_file)
 
-        self.arcFlagGraph = myGraph()
-        self.arcFlagGraph.num_partitions_axis = 10
-        self.arcFlagGraph.read_from_csv_file_node(graph_file)
-        self.arc_nodes = list(self.arcFlagGraph.graph.keys())
+        # self.arcFlagGraph = myGraph()
+        # self.arcFlagGraph.num_partitions_axis = 10
+        # self.arcFlagGraph.read_from_csv_file_node(graph_file)
+        # self.arc_nodes = list(self.arcFlagGraph.graph.keys())
 
-        self.arc_flags = ArcFlags(self.arcFlagGraph)
-        print("Preprocessing Arc Flags...")
-        self.arc_flags.preprocess_graph()
-        print("Arc Flag Preprocessing Done.")
+        # self.arc_flags = ArcFlags(self.arcFlagGraph)
+        # print("Preprocessing Arc Flags...")
+        # self.arc_flags.preprocess_graph()
+        # print("Arc Flag Preprocessing Done.")
 
         # Convert to Dijkstar graph
         """
@@ -56,9 +56,9 @@ class TestGraphAndDijkstra(unittest.TestCase):
             for neighbor, weight in neighbors.items():
                 self.dijkstar_graph.add_edge(node, neighbor, weight)
 
-    def euclidean_distance(self, cur_node, end_node):
-        x1, y1 = cur_node[0], cur_node[1]
-        x2, y2 = end_node[0], end_node[1]
+    def euclidean_distance(self, u, v, e, prev_e):
+        x1, y1 = u[0], u[1]
+        x2, y2 = v[0], v[1]
         return math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
     def a_star_cost_function(self, u, v, edge, prev_edge):
@@ -110,7 +110,7 @@ class TestGraphAndDijkstra(unittest.TestCase):
                         self.dijkstar_graph,
                         start_node,
                         end_node,
-                        cost_func=self.a_star_cost_function,
+                        # cost_func=self.a_star_cost_function,
                         heuristic_func=self.euclidean_distance,
                     )
                     ch_path_info = self.myCH.find_shortest_path(start_node, end_node)
@@ -204,6 +204,6 @@ if __name__ == "__main__":
 
     # Specfic Tests:
     suite = unittest.TestSuite()
-    suite.addTest(TestGraphAndDijkstra("test_Algorithm_time"))
+    suite.addTest(TestGraphAndDijkstra("test_shortest_path"))
     runner = unittest.TextTestRunner()
     runner.run(suite)
