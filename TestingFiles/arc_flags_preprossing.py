@@ -61,57 +61,31 @@ def straight_up():
     print(f"shortest_path: {shortest_path}")
 
 
-def test_instance_pickle():
-    name = "Surat"
-    # with open(f"GraphInstances/{name}_object.pkl", "rb") as filehandler:
-    #     graph = pickle.load(filehandler)
-    graph = Graph()
-    graph.num_partitions_axis = 2
-    graph.read_from_csv_file_node(f"Data/{name}_Edgelist.csv")
-    arc_flags = ArcFlags(graph)
-    print(f"Type: {type(arc_flags)}")
-    # Set initial source and target IDs
+def test_instance_pickle(name):
     source_id = 1
     target_id = 15
-
-    # Initialize source and target node variables
     source_node = None
     target_node = None
 
-    # Attempt to find the actual node objects in the graph
-    # print("Checking node types and values...")
-    # # for node in graph.graph.keys():
-    # #     if node.value < 100:
-    # #         print(f"Node ID: {node.value}, Type: {type(node)}")
+    with open(f"ArcFlagInstances/{name}_object.pkl", "rb") as filehandler:
+        arc_flag_graph = pickle.load(filehandler)
 
-    for node in graph.graph.keys():
+    for node in arc_flag_graph.graph.keys():
         if node.value == source_id:
             source_node = node
         if node.value == target_id:
             target_node = node
 
-    # Check if nodes were found
-    if not source_node or not target_node:
-        print(f"Could not find nodes for IDs {source_id} and {target_id} in the graph.")
-        return  # Exit if nodes are not found
-
-    print("Nodes found. Loading ArcFlags instance...")
-    with open(f"ArcFlagInstances/{name}_object.pkl", "rb") as filehandler:
-        arc_flag_graph = pickle.load(filehandler)
     arc_flag = ArcFlags(arc_flag_graph)
-
-    # print(vars(arc_flag))
-    # arc_flag.test()
-    # print(vars(graph))
-    # Assuming arc_flag is not None and has the method arc_flags_dijkstra implemented
     shortest_path = arc_flag.arc_flags_dijkstra(source_node, target_node)
     print(f"Shortest path: {shortest_path}")
 
 
 def main():
+    item = "Surat"
     # for item in cities:
     #     preprocess(item)
-    test_instance_pickle()
+    test_instance_pickle(item)
     # preprocess("Surat")
 
 
