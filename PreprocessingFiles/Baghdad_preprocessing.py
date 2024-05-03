@@ -119,6 +119,7 @@ def main():
     start = time.time()
     preprocess(item)
     end = time.time()
+    elapsed_time = end - start
     with open(f"PreprocessingFiles/Times/{item}_time.txt", "w") as file:
         file.write(f"{elapsed_time:.2f}")
 
