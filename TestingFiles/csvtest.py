@@ -9,7 +9,7 @@ from Algorithms.Dijkstra import Dijkstra
 
 def main():
     start_node = 1
-    end_node = 5
+    end_node = 25
     mygraph = Graph()
 
     name = "Surat"

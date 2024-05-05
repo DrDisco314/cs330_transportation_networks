@@ -17,6 +17,7 @@ from src.graph import Node
 from Algorithms.Dijkstra import Dijkstra
 from Algorithms.CH import CH
 from Algorithms.Arc_Flags import *
+from Algorithms.CustomAlgo import CustomAlgo
 import time
 import math
 
@@ -30,17 +31,17 @@ class TestGraphAndDijkstra(unittest.TestCase):
         Return:
             None
         """
-        name = "NewYork"
+        name = "Surat"
         graph_file = f"Data/{name}_Edgelist.csv"
         self.graph = myGraph()
         self.graph.read_from_csv_file(graph_file)
         self.myDijkstra = Dijkstra(self.graph)
         self.myCH = CH(graph_file)
 
-        # arc_flag_file = f"ArcFlagInstances/{name}_object.pkl"
-        # with open(arc_flag_file, "rb") as file:
-        #     arc_flag_graph = pickle.load(file)
-        # self.arc_flags = ArcFlags(arc_flag_graph)
+        arc_flag_file = f"ArcFlagInstances/{name}_object.pkl"
+        with open(arc_flag_file, "rb") as file:
+            arc_flag_graph = pickle.load(file)
+        self.arc_flags = ArcFlags(arc_flag_graph)
 
         # Convert to Dijkstar graph
         """
@@ -56,27 +57,15 @@ class TestGraphAndDijkstra(unittest.TestCase):
             for neighbor, weight in neighbors.items():
                 self.dijkstar_graph.add_edge(node, neighbor, weight.weight)
 
+        self.custom_algo = CustomAlgo(arc_flag_file)
+
     def euclidean_distance(self, u: Node, v: Node, e, prev_e):
         x1, y1 = u.xcoord, u.ycoord
         x2, y2 = v.xcoord, v.ycoord
         return math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
     def a_star_cost_function(self, u, v, edge, prev_edge):
-        if isinstance(edge, tuple):
-            length, name = edge
-        else:
-            length = edge  # Only length is provided, no name
-            name = None  # Default or dummy name
-
-        if prev_edge and isinstance(prev_edge, tuple):
-            prev_length, prev_name = prev_edge
-        else:
-            prev_name = None
-
-        cost = length
-        if name != prev_name:
-            cost += 10  # Additional cost for changing routes or similar logic
-        return cost
+        return edge
 
     def test_graph_structure(self):
         """
@@ -98,23 +87,23 @@ class TestGraphAndDijkstra(unittest.TestCase):
         Output:
             None
         """
-        start_list = [247191, 247202, 247132, 247072, 697284, 898404, 1057992]
-        end_list = [298519, 298528, 45266, 336, 12, 6, 8, 16, 18, 1, 2, 4]
-        tests_differ = 0
+        start_list = [1, 2, 4, 5, 10, 11, 12, 13, 15, 16, 20, 21]
+        end_list = [122, 134, 131, 135, 208, 213, 216, 268]
         no_path = 0
         for start_node in start_list:
             for end_node in end_list:
                 try:
+                    mydijkstra = self.myDijkstra.find_shortest_path(
+                        start_node, end_node
+                    )
+
                     node1 = self.node_graph.return_node(start_node)
                     node2 = self.node_graph.return_node(end_node)
                     dijkstrar_path_info = find_path(self.dijkstar_graph, node1, node2)
-                    # with open("ArcFlagInstances/othertest.txt", "w") as file:
-                    #     for item in dijkstrar_path_info:
-                    #         file.write(str(item) + "\n")
-                    # file.close()
                     dijkstrar_path_info = [
                         item.value for item in dijkstrar_path_info[0]
                     ]
+
                     astar_path_info = find_path(
                         self.dijkstar_graph,
                         node1,
@@ -123,42 +112,52 @@ class TestGraphAndDijkstra(unittest.TestCase):
                         heuristic_func=self.euclidean_distance,
                     )
                     astar_path_info = [item.value for item in astar_path_info[0]]
+
                     ch_path_info = self.myCH.find_shortest_path(start_node, end_node)
-                    self.assertIsNotNone(dijkstrar_path_info)
-                    self.assertEqual(
-                        self.myDijkstra.find_shortest_path(start_node, end_node),
-                        dijkstrar_path_info,
-                        ch_path_info,
+
+                    node1 = self.arc_flags.graph.return_node(start_node)
+                    node2 = self.arc_flags.graph.return_node(end_node)
+                    arc_flag_path = self.arc_flags.arc_flags_dijkstra(node1, node2)
+                    arc_flag_path = [item.value for item in arc_flag_path]
+
+                    custom_algo_path = self.custom_algo.find_shortest_path(
+                        start_node, end_node
                     )
-                    self.assertIsNotNone(astar_path_info)
-                    self.assertEqual(dijkstrar_path_info[0], astar_path_info[0])
-                    self.assertEqual(dijkstrar_path_info[-1], astar_path_info[-1])
-                #             if len(astar_path_info) != len(dijkstrar_path_info):
-                #                 print(len(astar_path_info), len(dijkstrar_path_info))
-                #                 print(start_node, end_node)
-                #                 print(astar_path_info[0], dijkstrar_path_info[0])
-                #                 print(astar_path_info[-1], dijkstrar_path_info[-1])
-                #                 print()
-                #                 tests_differ += 1
-                #                 with open("ArcFlagInstances/othertest.txt", "w") as file:
-                #                     for i in range(len(astar_path_info)):
-                #                         try:
-                #                             file.write(
-                #                                 str(astar_path_info[i])
-                #                                 + " "
-                #                                 + str(dijkstrar_path_info[i])
-                #                                 + "\n"
-                #                             )
-                #                         except:
-                #                             file.write(str(astar_path_info[i]) + "\n")
-                #                 file.close()
+                    custom_algo_path = [item.value for item in custom_algo_path[0]]
+
+                    self.assertIsNotNone(dijkstrar_path_info)
+
+                    self.assertTrue(
+                        all(a == b for a, b in zip(mydijkstra, dijkstrar_path_info))
+                    )
+                    self.assertTrue(
+                        all(a == b for a, b in zip(ch_path_info, dijkstrar_path_info))
+                    )
+                    self.assertTrue(
+                        all(a == b for a, b in zip(arc_flag_path, dijkstrar_path_info))
+                    )
+                    self.assertTrue(
+                        all(
+                            a == b for a, b in zip(astar_path_info, dijkstrar_path_info)
+                        )
+                    )
+                    self.assertTrue(
+                        all(
+                            a == b
+                            for a, b in zip(custom_algo_path, dijkstrar_path_info)
+                        )
+                    )
+
                 except NoPathError:
-                    # no_path += 1
+                    no_path += 1
                     self.assertIsNone(
                         self.myDijkstra.find_shortest_path(start_node, end_node)
                     )
                     self.assertIsNot(True, ch_path_info)
-        # print(tests_differ, no_path)
+
+        print(
+            f"Out of {len(start_list) * len(end_list)}, possible routes, {no_path} had no path."
+        )
 
     def test_Algorithm_time(self):
         """

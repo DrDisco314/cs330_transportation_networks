@@ -375,7 +375,14 @@ class Graph:
         """
         return self.graph
 
-    def return_node(self, value):
+    def return_node(self, value: int) -> Node | None:
+        """
+        Returns the node with a given value.
+        Input:
+            Value (int) : ID of desired node.
+        Output:
+            (Node) : desired node if exists.
+        """
         for key in self.graph:
             if key.value == value:
                 return key
