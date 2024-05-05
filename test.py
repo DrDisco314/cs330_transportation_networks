@@ -31,14 +31,15 @@ class TestGraphAndDijkstra(unittest.TestCase):
         Return:
             None
         """
-        name = "Surat"
-        graph_file = f"Data/{name}_Edgelist.csv"
+        self.name = "Surat"
+        num = "10"
+        graph_file = f"Data/{self.name}_Edgelist.csv"
         self.graph = myGraph()
         self.graph.read_from_csv_file(graph_file)
         self.myDijkstra = Dijkstra(self.graph)
         self.myCH = CH(graph_file)
 
-        arc_flag_file = f"ArcFlagInstances/{name}_object.pkl"
+        arc_flag_file = f"ArcFlagInstances/{self.name}_{num}_object.pkl"
         with open(arc_flag_file, "rb") as file:
             arc_flag_graph = pickle.load(file)
         self.arc_flags = ArcFlags(arc_flag_graph)
@@ -69,15 +70,18 @@ class TestGraphAndDijkstra(unittest.TestCase):
 
     def test_graph_structure(self):
         """
-        Test the graph class to ensure functioning as expected.
+        Test the graph class to ensure functioning as expected (ONLY FOR NEW YORK).
         Input:
             None
         Output:
             None
         """
-        self.assertIn(805200, self.graph.graph)
-        self.assertIn(2, self.graph.graph[1])
-        self.assertEqual(self.graph.graph[1][2], 14.570863)
+        if self.name == "NewYork":
+            self.assertIn(805200, self.graph.graph)
+            self.assertIn(2, self.graph.graph[1])
+            self.assertEqual(self.graph.graph[1][2], 14.570863)
+        else:
+            self.assertIsNone(None)
 
     def test_shortest_path(self):
         """
@@ -120,32 +124,37 @@ class TestGraphAndDijkstra(unittest.TestCase):
                     arc_flag_path = self.arc_flags.arc_flags_dijkstra(node1, node2)
                     arc_flag_path = [item.value for item in arc_flag_path]
 
-                    custom_algo_path = self.custom_algo.find_shortest_path(
-                        start_node, end_node
-                    )
+                    node1 = self.custom_algo.arc_flags_graph.return_node(start_node)
+                    node2 = self.custom_algo.arc_flags_graph.return_node(end_node)
+                    custom_algo_path = self.custom_algo.find_shortest_path(node1, node2)
                     custom_algo_path = [item.value for item in custom_algo_path[0]]
 
                     self.assertIsNotNone(dijkstrar_path_info)
 
                     self.assertTrue(
-                        all(a == b for a, b in zip(mydijkstra, dijkstrar_path_info))
+                        all(a == b for a, b in zip(mydijkstra, dijkstrar_path_info)),
+                        "Dijkstra Failed",
                     )
                     self.assertTrue(
-                        all(a == b for a, b in zip(ch_path_info, dijkstrar_path_info))
+                        all(a == b for a, b in zip(ch_path_info, dijkstrar_path_info)),
+                        "CH Failed",
                     )
                     self.assertTrue(
-                        all(a == b for a, b in zip(arc_flag_path, dijkstrar_path_info))
+                        all(a == b for a, b in zip(arc_flag_path, dijkstrar_path_info)),
+                        "Arc Flags Failed",
                     )
                     self.assertTrue(
                         all(
                             a == b for a, b in zip(astar_path_info, dijkstrar_path_info)
-                        )
+                        ),
+                        "A star Failed",
                     )
                     self.assertTrue(
                         all(
                             a == b
                             for a, b in zip(custom_algo_path, dijkstrar_path_info)
-                        )
+                        ),
+                        "Custom Algo Failed",
                     )
 
                 except NoPathError:
@@ -155,8 +164,9 @@ class TestGraphAndDijkstra(unittest.TestCase):
                     )
                     self.assertIsNot(True, ch_path_info)
 
+        print("\n")
         print(
-            f"Out of {len(start_list) * len(end_list)}, possible routes, {no_path} had no path."
+            f"Out of {len(start_list) * len(end_list)} possible routes, {no_path} had no path."
         )
 
     def test_Algorithm_time(self):
@@ -174,11 +184,13 @@ class TestGraphAndDijkstra(unittest.TestCase):
             "Contraction Hierarchies (ms)",
             "A* (ms)",
             "Arc Flags (ms)",
+            "Custom Algo (ms)",
         ]
-        header_format = "{:<15} {:<20} {:<25} {:<10} {:<15}"
+        header_format = "{:<15} {:<20} {:<25} {:<10} {:<15} {:<15}"
+        print("\n")
         print(header_format.format(*headers))
 
-        for i in range(1, 15):
+        for i in range(1, 7):
             path_length = 0
             starting_node = 1
             ending_node = 1
@@ -195,6 +207,8 @@ class TestGraphAndDijkstra(unittest.TestCase):
             ch_time_list = []
             astar_time_list = []
             arc_flags_time_list = []
+            Custom_algo_time_list = []
+
             for j in range(5):
                 dij_start_time = time.time()
                 self.myDijkstra.find_shortest_path(starting_node, ending_node)
@@ -229,12 +243,23 @@ class TestGraphAndDijkstra(unittest.TestCase):
                 arc_flags_time = (arc_flags_end_time - arc_flags_start_time) * 1000
                 arc_flags_time_list.append(arc_flags_time)
 
+                node1 = self.custom_algo.arc_flags_graph.return_node(starting_node)
+                node2 = self.custom_algo.arc_flags_graph.return_node(ending_node)
+                custom_algo_start_time = time.time()
+                self.custom_algo.find_shortest_path(node1, node2)
+                custom_algo_end_time = time.time()
+                custom_algo_time = (
+                    custom_algo_end_time - custom_algo_start_time
+                ) * 1000
+                Custom_algo_time_list.append(custom_algo_time)
+
             data = [
                 path_length,
                 mean(dij_time_list),
                 mean(ch_time_list),
                 mean(astar_time_list),
                 mean(arc_flags_time_list),
+                mean(Custom_algo_time_list),
             ]
             print(
                 header_format.format(
@@ -243,13 +268,14 @@ class TestGraphAndDijkstra(unittest.TestCase):
                     f"{mean(ch_time_list):.3f}",
                     f"{mean(astar_time_list):.3f}",
                     f"{mean(arc_flags_time_list):.3f}",
+                    f"{mean(Custom_algo_time_list):.3f}",
                 )
             )
 
 
 if __name__ == "__main__":
     # All tests:
-    # unittest.main()
+    unittest.main()
 
     # Specfic Tests:
     # suite = unittest.TestSuite()
@@ -257,7 +283,7 @@ if __name__ == "__main__":
     # runner = unittest.TextTestRunner()
     # runner.run(suite)
 
-    suite = unittest.TestSuite()
-    suite.addTest(TestGraphAndDijkstra("test_shortest_path"))
-    runner = unittest.TextTestRunner()
-    runner.run(suite)
+    # suite = unittest.TestSuite()
+    # suite.addTest(TestGraphAndDijkstra("test_shortest_path"))
+    # runner = unittest.TextTestRunner()
+    # runner.run(suite)

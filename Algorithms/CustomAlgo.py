@@ -11,6 +11,7 @@ import math
 import sys
 import pickle
 from dijkstar import Graph as astar_graph, find_path, NoPathError
+from src.graph import Node
 
 sys.path.append("../cs330_transportation_networks")
 
@@ -74,17 +75,15 @@ class CustomAlgo:
 
         return dijkstar_graph
 
-    def find_shortest_path(self, start_value: int, end_value):
+    def find_shortest_path(self, start_node: Node, end_node: Node):
         """
         Find and return the shortest path between 2 nodes.
         Input:
-            Start_value (int) : ID of starting node.
-            end_value (int) : ID of the destination node.
+            Start_node (Node) : Starting node.
+            end_node (Node) : Destination node.
         Output:
             (PathInfo) : Dijkstar Type containing shortest path, or None.
         """
-        start_node = self.arc_flags_graph.return_node(start_value)
-        end_node = self.arc_flags_graph.return_node(end_value)
 
         def heuristic_func(u, v, edge, prev_edge):
             return euclidean_distance(u.xcoord, u.ycoord, v.xcoord, v.ycoord)

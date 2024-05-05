@@ -61,13 +61,13 @@ def straight_up():
     print(f"shortest_path: {shortest_path}")
 
 
-def test_instance_pickle(name):
+def test_instance_pickle(name, num):
     source_id = 1
     target_id = 25
     source_node = None
     target_node = None
 
-    with open(f"ArcFlagInstances/{name}_object.pkl", "rb") as filehandler:
+    with open(f"ArcFlagInstances/{name}_{num}_object.pkl", "rb") as filehandler:
         arc_flag_graph = pickle.load(filehandler)
 
     arc_flag = ArcFlags(arc_flag_graph)
@@ -79,9 +79,10 @@ def test_instance_pickle(name):
 
 def main():
     item = "Surat"
+    num = "10"
     # for item in cities:
     #     preprocess(item)
-    test_instance_pickle(item)
+    test_instance_pickle(item, num)
     # preprocess("Surat")
 
 
