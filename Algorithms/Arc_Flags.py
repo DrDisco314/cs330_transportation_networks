@@ -121,11 +121,11 @@ class ArcFlags:
             target_region[1] * self.graph.num_partitions_axis
         )
 
-        print(f"Source node: {source}")
-        print(f"Source node region: {source.region}")
-        print(f"Target node: {target}")
-        print(f"Target node region: {target.region}")
-        print(f"Desired arc flag index: {arc_flag_index}")
+        # print(f"Source node: {source}")
+        # print(f"Source node region: {source.region}")
+        # print(f"Target node: {target}")
+        # print(f"Target node region: {target.region}")
+        # print(f"Desired arc flag index: {arc_flag_index}")
 
         # Initialize the min heap
         priority_queue = [(0, source)]

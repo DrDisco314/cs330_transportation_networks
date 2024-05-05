@@ -70,13 +70,9 @@ def test_instance_pickle(name):
     with open(f"ArcFlagInstances/{name}_object.pkl", "rb") as filehandler:
         arc_flag_graph = pickle.load(filehandler)
 
-    for node in arc_flag_graph.graph.keys():
-        if node.value == source_id:
-            source_node = node
-        if node.value == target_id:
-            target_node = node
-
     arc_flag = ArcFlags(arc_flag_graph)
+    source_node = arc_flag.graph.return_node(source_id)
+    target_node = arc_flag_graph.return_node(target_id)
     shortest_path = arc_flag.arc_flags_dijkstra(source_node, target_node)
     print(f"Shortest path: {shortest_path}")
 

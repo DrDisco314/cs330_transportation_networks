@@ -9,6 +9,7 @@
 """
 
 import unittest
+import pickle
 from statistics import mean
 from dijkstar import Graph as DijkstarGraph, find_path, NoPathError
 from src.graph import Graph as myGraph
@@ -36,15 +37,10 @@ class TestGraphAndDijkstra(unittest.TestCase):
         self.myDijkstra = Dijkstra(self.graph)
         self.myCH = CH(graph_file)
 
-        # self.arcFlagGraph = myGraph()
-        # self.arcFlagGraph.num_partitions_axis = 10
-        # self.arcFlagGraph.read_from_csv_file_node(graph_file)
-        # self.arc_nodes = list(self.arcFlagGraph.graph.keys())
-
-        # self.arc_flags = ArcFlags(self.arcFlagGraph)
-        # print("Preprocessing Arc Flags...")
-        # self.arc_flags.preprocess_graph()
-        # print("Arc Flag Preprocessing Done.")
+        # arc_flag_file = f"ArcFlagInstances/{name}_object.pkl"
+        # with open(arc_flag_file, "rb") as file:
+        #     arc_flag_graph = pickle.load(file)
+        # self.arc_flags = ArcFlags(arc_flag_graph)
 
         # Convert to Dijkstar graph
         """
@@ -103,7 +99,9 @@ class TestGraphAndDijkstra(unittest.TestCase):
             None
         """
         start_list = [247191, 247202, 247132, 247072, 697284, 898404, 1057992]
-        end_list = [298519, 298528, 45266, 12, 6, 8, 16, 18, 1, 2, 4]
+        end_list = [298519, 298528, 45266, 336, 12, 6, 8, 16, 18, 1, 2, 4]
+        tests_differ = 0
+        no_path = 0
         for start_node in start_list:
             for end_node in end_list:
                 try:
@@ -121,7 +119,7 @@ class TestGraphAndDijkstra(unittest.TestCase):
                         self.dijkstar_graph,
                         node1,
                         node2,
-                        # cost_func=self.a_star_cost_function,
+                        cost_func=self.a_star_cost_function,
                         heuristic_func=self.euclidean_distance,
                     )
                     astar_path_info = [item.value for item in astar_path_info[0]]
@@ -133,16 +131,34 @@ class TestGraphAndDijkstra(unittest.TestCase):
                         ch_path_info,
                     )
                     self.assertIsNotNone(astar_path_info)
-                    if astar_path_info != dijkstrar_path_info:
-                        with open("ArcFlagInstances/othertest.txt", "w") as file:
-                            for item in astar_path_info:
-                                file.write(str(item) + "\n")
-                        file.close()
+                    self.assertEqual(dijkstrar_path_info[0], astar_path_info[0])
+                    self.assertEqual(dijkstrar_path_info[-1], astar_path_info[-1])
+                #             if len(astar_path_info) != len(dijkstrar_path_info):
+                #                 print(len(astar_path_info), len(dijkstrar_path_info))
+                #                 print(start_node, end_node)
+                #                 print(astar_path_info[0], dijkstrar_path_info[0])
+                #                 print(astar_path_info[-1], dijkstrar_path_info[-1])
+                #                 print()
+                #                 tests_differ += 1
+                #                 with open("ArcFlagInstances/othertest.txt", "w") as file:
+                #                     for i in range(len(astar_path_info)):
+                #                         try:
+                #                             file.write(
+                #                                 str(astar_path_info[i])
+                #                                 + " "
+                #                                 + str(dijkstrar_path_info[i])
+                #                                 + "\n"
+                #                             )
+                #                         except:
+                #                             file.write(str(astar_path_info[i]) + "\n")
+                #                 file.close()
                 except NoPathError:
+                    # no_path += 1
                     self.assertIsNone(
                         self.myDijkstra.find_shortest_path(start_node, end_node)
                     )
                     self.assertIsNot(True, ch_path_info)
+        # print(tests_differ, no_path)
 
     def test_Algorithm_time(self):
         """
@@ -153,14 +169,15 @@ class TestGraphAndDijkstra(unittest.TestCase):
             None.
         """
 
-        print(
-            "{:<15} {:<10} {:<10} {:<10}".format(
-                "Path Length",
-                "Dijkstar Time (ms)",
-                "Contraction Heirachies (ms)",
-                "A* (MS)",
-            )
-        )
+        headers = [
+            "Path Length",
+            "Dijkstar Time (ms)",
+            "Contraction Hierarchies (ms)",
+            "A* (ms)",
+            "Arc Flags (ms)",
+        ]
+        header_format = "{:<15} {:<20} {:<25} {:<10} {:<15}"
+        print(header_format.format(*headers))
 
         for i in range(1, 15):
             path_length = 0
@@ -169,18 +186,16 @@ class TestGraphAndDijkstra(unittest.TestCase):
             while path_length != 2**i:
                 try:
                     ending_node += 1
-                    # ch_start_time = time.time()
                     path_info = self.myCH.find_shortest_path(starting_node, ending_node)
-                    # ch_end_time = time.time()
                     path_length = len(path_info)
 
                 except Exception as e:
                     starting_node += 1
-                    # ending_node = starting_node + 1
                     continue
             dij_time_list = []
             ch_time_list = []
             astar_time_list = []
+            arc_flags_time_list = []
             for j in range(5):
                 dij_start_time = time.time()
                 self.myDijkstra.find_shortest_path(starting_node, ending_node)
@@ -207,12 +222,28 @@ class TestGraphAndDijkstra(unittest.TestCase):
                 astar_time = (astar_end_time - astar_start_time) * 1000
                 astar_time_list.append(astar_time)
 
+                node1 = self.arc_flags.graph.return_node(starting_node)
+                node2 = self.arc_flags.graph.return_node(ending_node)
+                arc_flags_start_time = time.time()
+                self.arc_flags.arc_flags_dijkstra(node1, node2)
+                arc_flags_end_time = time.time()
+                arc_flags_time = (arc_flags_end_time - arc_flags_start_time) * 1000
+                arc_flags_time_list.append(arc_flags_time)
+
+            data = [
+                path_length,
+                mean(dij_time_list),
+                mean(ch_time_list),
+                mean(astar_time_list),
+                mean(arc_flags_time_list),
+            ]
             print(
-                "{:<15} {:<10.3f} {:<10.3f} {:<10.3f}".format(
+                header_format.format(
                     path_length,
-                    mean(dij_time_list),
-                    mean(ch_time_list),
-                    mean(astar_time_list),
+                    f"{mean(dij_time_list):.3f}",
+                    f"{mean(ch_time_list):.3f}",
+                    f"{mean(astar_time_list):.3f}",
+                    f"{mean(arc_flags_time_list):.3f}",
                 )
             )
 
@@ -222,6 +253,11 @@ if __name__ == "__main__":
     # unittest.main()
 
     # Specfic Tests:
+    # suite = unittest.TestSuite()
+    # suite.addTest(TestGraphAndDijkstra("test_Algorithm_time"))
+    # runner = unittest.TextTestRunner()
+    # runner.run(suite)
+
     suite = unittest.TestSuite()
     suite.addTest(TestGraphAndDijkstra("test_shortest_path"))
     runner = unittest.TextTestRunner()
