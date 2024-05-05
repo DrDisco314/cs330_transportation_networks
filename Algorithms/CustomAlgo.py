@@ -99,17 +99,3 @@ class CustomAlgo:
             )
         except NoPathError:
             return None
-
-
-# def main():
-#     custom_algo = CustomAlgo("ArcFlagInstances/Surat_object.pkl")
-#     start_node_id = 1
-#     end_node_id = 25
-#     path_info = custom_algo.find_shortest_path(start_node_id, end_node_id)
-#     for node in path_info[0]:
-#         print(node.value)
-#     print("Path info:", path_info)
-
-
-# if __name__ == "__main__":
-#     main()
