@@ -11,23 +11,41 @@ import math
 import sys
 import pickle
 from dijkstar import Graph as astar_graph, find_path, NoPathError
-from src.graph import Node
 
 sys.path.append("../cs330_transportation_networks")
+from src.graph import Graph, Node, Edge
+
+EMPIRICAL_HEURISTIC_CONSTANT = 1e6
 
 
-def euclidean_distance(x1: float, y1: float, x2: float, y2: float):
+def arc_flag_euclidean_distance(u: Node, v: Node, graph: Graph, target_index: int) -> float:
     """
-    Calculate the Euclidean distance between 2 points.
+    Calculate a heuristic cost of travelling from a current node, u, to a neighbor node, v,
+    by making use of Euclidean distance and whether or not the arc flag from u to v is set.
     Input:
-        x1 (float) : x coordinate of point 1.
-        y1 (float) : y coordinate of point 1.
-        x2 (float) : x coordinate of point 2.
-        y2 (float) : y coordinate of point 2.
+        u (Node) : Current node object being explored
+        v (Node) : Neighbor node object being explored
+        graph (Graph) : Arc flags graph object with preprocessed edges
+        target_index (int) : Desired arc flag index to check if edge is on a shortest path
+            to the region where the target node of the search lies
     Output:
         (float) : Euclidean Distance
     """
-    return math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+    # Get instance of node objects stored in the arc flags graph
+    current_node = graph.return_node(u.value)
+    neighbor = graph.return_node(v.value)
+
+    # Get the edge object connecting u and v
+    node_neighbors = graph.graph[current_node]
+    desired_neighbor_edge = node_neighbors[v]
+
+    # Decentivize A* picking edges where the arc flag leading to target region is false
+    # by adding a large, empirically determined constant, when arc_flag[target_index] is false
+    arc_flag_heuristic = (
+        EMPIRICAL_HEURISTIC_CONSTANT if not desired_neighbor_edge.arc_flags[target_index] 
+        else 0
+    )
+    return math.sqrt((v.xcoord - u.xcoord) ** 2 + (v.ycoord - u.ycoord) ** 2) + arc_flag_heuristic
 
 
 class CustomAlgo:
@@ -84,9 +102,13 @@ class CustomAlgo:
         Output:
             (PathInfo) : Dijkstar Type containing shortest path, or None.
         """
+        num_partitions = self.arc_flags_graph.num_partitions_axis
+        target_node_region_index = end_node.region[0] + (
+                    end_node.region[1] * num_partitions
+                )
 
         def heuristic_func(u, v, edge, prev_edge):
-            return euclidean_distance(u.xcoord, u.ycoord, v.xcoord, v.ycoord)
+            return arc_flag_euclidean_distance(u, v, self.arc_flags_graph, target_node_region_index)
 
         try:
             cost_func = lambda u, v, edge, prev_edge: edge["cost"]
