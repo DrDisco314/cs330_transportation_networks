@@ -32,7 +32,7 @@ class TestGraphAndDijkstra(unittest.TestCase):
             None
         """
         self.name = "Surat"
-        num = "10"
+        num = "3"
         graph_file = f"Data/{self.name}_Edgelist.csv"
         self.graph = myGraph()
         self.graph.read_from_csv_file(graph_file)
@@ -50,7 +50,7 @@ class TestGraphAndDijkstra(unittest.TestCase):
         Pre-existing Dijksta Algorithm to make sure our implentation is working the same.
         """
         self.node_graph = myGraph()
-        self.node_graph.num_partitions_axis = 2
+        self.node_graph.num_partitions_axis = 3
         self.node_graph.read_from_csv_file_node(graph_file)
 
         self.dijkstar_graph = DijkstarGraph()
@@ -190,7 +190,7 @@ class TestGraphAndDijkstra(unittest.TestCase):
         print("\n")
         print(header_format.format(*headers))
 
-        for i in range(1, 7):
+        for i in range(1, 8):
             path_length = 0
             starting_node = 1
             ending_node = 1
@@ -275,13 +275,13 @@ class TestGraphAndDijkstra(unittest.TestCase):
 
 if __name__ == "__main__":
     # All tests:
-    unittest.main()
+    # unittest.main()
 
     # Specfic Tests:
-    # suite = unittest.TestSuite()
-    # suite.addTest(TestGraphAndDijkstra("test_Algorithm_time"))
-    # runner = unittest.TextTestRunner()
-    # runner.run(suite)
+    suite = unittest.TestSuite()
+    suite.addTest(TestGraphAndDijkstra("test_Algorithm_time"))
+    runner = unittest.TextTestRunner()
+    runner.run(suite)
 
     # suite = unittest.TestSuite()
     # suite.addTest(TestGraphAndDijkstra("test_shortest_path"))
