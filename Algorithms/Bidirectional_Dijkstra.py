@@ -27,17 +27,17 @@ class BidirectionalDijkstra:
         """
         self.graph = graph
 
-    def reconstruct_shortest_path(self, predecessors_f, predecessors_b, meeting_node):
+    def reconstruct_shortest_path(self, predecessors_f: dict[Node, Node], predecessors_b: dict[Node, Node],
+        meeting_node: Node) -> list[Node]:
         """
         Takes in the predecessors of some meeting node and using them reconstructs the
         shortest path from some source to target node.
         Input:
-            graph Graph : A graph object with node keys and a dictionary as value storing other
-                Node neighbors and weight.
-            start_node Node : A starting node storing a label, coordinates, and weights to other Node objects.
-            end_node Node : An ending node storing a label, coordinates, and weights to other Node objects.
+            predecessors_f (dict[Node, Node]) : Dictionary of predecessors from the forward search
+            predecessors_b (dict[Node, Node]) : Dictionary of predecessors from the backward search
+            meeting_node (Node) : Meeting node of forward and backward search
         Output:
-            (set_f, set_b) : A tuple containing the forward and backward search shortest path trees.
+            path (list[Node]) : List of nodes on shortest path from a source to target node
         """
         path = []
         
@@ -54,22 +54,19 @@ class BidirectionalDijkstra:
         current_node = meeting_node
         while (current_node in predecessors_b):
             current_node = predecessors_b[current_node]
-
             if current_node:
                 path.append(current_node)
 
         return path
 
-    def bidirectional_dijkstra(self, start_node: Node, end_node: Node):
+    def bidirectional_dijkstra(self, start_node: Node, end_node: Node) -> list[Node]:
         """
         Runs a bidirectional Dijkstra's algorithm between start_node and end_node
         Input:
-            graph Graph : A graph object with node keys and a dictionary as value storing other
-                Node neighbors and weight.
-            start_node Node : A starting node storing a label, coordinates, and weights to other Node objects.
-            end_node Node : An ending node storing a label, coordinates, and weights to other Node objects.
+            start_node (Node) : A starting node storing a label, coordinates, and weights to other Node objects.
+            end_node (Node) : An ending node storing a label, coordinates, and weights to other Node objects.
         Output:
-            (set_f, set_b) : A tuple containing the forward and backward search shortest path trees.
+            shortest_path (list[Node]) : List of nodes forming the shortest path from start to end node
         """
 
         # Citation: https://www.homepages.ucl.ac.uk/~ucahmto/math/2020/05/30/bidirectional-dijkstra.html
