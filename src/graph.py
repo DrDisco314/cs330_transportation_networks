@@ -296,7 +296,6 @@ class Graph:
         Return:
             None
         """
-        ##XCoord,YCoord,START_NODE,END_NODE,EDGE,LENGTH
         processed_nodes = self.process_nodes(filename)
 
         self.smallest_x_node = min(
@@ -339,7 +338,6 @@ class Graph:
         Return:
             None
         """
-        ##XCoord,YCoord,START_NODE,END_NODE,EDGE,LENGTH
         try:
             with open(filename, newline="") as file:
                 reader = csv.DictReader(file)
