@@ -1,6 +1,9 @@
 # cs330_transportation_networks
 Implements a variety of algorithms to produce quick query times for the transportation network problem.
 
+# `requirements.txt`
+Use $pip install -r `requirements.txt` to install nessasary packages. 
+
 # `test.py`
 This function contains instances of all algorithms. There are very detailed instructions on how to run the file, and
 customize which graph is used. This file is delicate, and will run how it is currently set up. Any changes require knowledge on how the algorithms are set up, otherwise user may receive errors. 
