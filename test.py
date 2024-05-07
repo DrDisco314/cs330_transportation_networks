@@ -253,8 +253,8 @@ class TestGraphAndDijkstra(unittest.TestCase):
         dij_time_list = []
         ch_time_list = []
         astar_time_list = []
-        arc_flags_time_list = [0]
-        Custom_algo_time_list = [0]
+        arc_flags_time_list = []
+        Custom_algo_time_list = []
 
         # Find a path up to size 64.
         for i in range(1, 7):
@@ -343,15 +343,43 @@ class TestGraphAndDijkstra(unittest.TestCase):
 
 
 if __name__ == "__main__":
+    """
+    This file will run as is. 
+
+    **If you want to change things such as which map is being tested**
+
+    When running this algorithm, there are 2 cases. The first being when you want to check Arc Flags and 
+    Custom Algorithm. If this is the case, you can run with any graph that has a pickle file in the 
+    ArcFlagInstance directory. 
+
+    1) You can change the name of the graph in line 34. 
+
+    2) If you choose to change the graph, and run Arc Flags and Custom Algorithm, you must change the start and 
+    end nodes in test_shortest_path to be ones that can be found in the graph (by hand to confirm they exist), 
+    otherwise tests will fail. 
+
+    3) If you choose to run larger graphs without Arc Flags and Custom, you must comment out the following lines:
+        61
+        42-45
+        150-153
+        156-159
+        173-176
+        196-214
+        306-324
+
+    You then must also follow the same instructions in step 2 as well. 
+    """
     # All tests:
     unittest.main()
 
     # Specfic Tests:
+    # This will test only the algorithm run time. 
     # suite = unittest.TestSuite()
     # suite.addTest(TestGraphAndDijkstra("test_Algorithm_time"))
     # runner = unittest.TextTestRunner()
     # runner.run(suite)
 
+    # This will test only the path correctness
     # suite = unittest.TestSuite()
     # suite.addTest(TestGraphAndDijkstra("test_shortest_path"))
     # runner = unittest.TextTestRunner()
