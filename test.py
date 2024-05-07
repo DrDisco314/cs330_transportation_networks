@@ -189,8 +189,12 @@ class TestGraphAndDijkstra(unittest.TestCase):
         header_format = "{:<15} {:<20} {:<25} {:<10} {:<15} {:<15}"
         print("\n")
         print(header_format.format(*headers))
-
-        for i in range(1, 8):
+        dij_time_list = []
+        ch_time_list = []
+        astar_time_list = []
+        arc_flags_time_list = [0]
+        Custom_algo_time_list = [0]
+        for i in range(1, 7):
             path_length = 0
             starting_node = 1
             ending_node = 1
@@ -203,11 +207,6 @@ class TestGraphAndDijkstra(unittest.TestCase):
                 except Exception as e:
                     starting_node += 1
                     continue
-            dij_time_list = []
-            ch_time_list = []
-            astar_time_list = []
-            arc_flags_time_list = []
-            Custom_algo_time_list = []
 
             for j in range(5):
                 dij_start_time = time.time()
@@ -235,23 +234,23 @@ class TestGraphAndDijkstra(unittest.TestCase):
                 astar_time = (astar_end_time - astar_start_time) * 1000
                 astar_time_list.append(astar_time)
 
-                node1 = self.arc_flags.graph.return_node(starting_node)
-                node2 = self.arc_flags.graph.return_node(ending_node)
-                arc_flags_start_time = time.time()
-                self.arc_flags.arc_flags_dijkstra(node1, node2)
-                arc_flags_end_time = time.time()
-                arc_flags_time = (arc_flags_end_time - arc_flags_start_time) * 1000
-                arc_flags_time_list.append(arc_flags_time)
+                # node1 = self.arc_flags.graph.return_node(starting_node)
+                # node2 = self.arc_flags.graph.return_node(ending_node)
+                # arc_flags_start_time = time.time()
+                # self.arc_flags.arc_flags_dijkstra(node1, node2)
+                # arc_flags_end_time = time.time()
+                # arc_flags_time = (arc_flags_end_time - arc_flags_start_time) * 1000
+                # arc_flags_time_list.append(arc_flags_time)
 
-                node1 = self.custom_algo.arc_flags_graph.return_node(starting_node)
-                node2 = self.custom_algo.arc_flags_graph.return_node(ending_node)
-                custom_algo_start_time = time.time()
-                self.custom_algo.find_shortest_path(node1, node2)
-                custom_algo_end_time = time.time()
-                custom_algo_time = (
-                    custom_algo_end_time - custom_algo_start_time
-                ) * 1000
-                Custom_algo_time_list.append(custom_algo_time)
+                # node1 = self.custom_algo.arc_flags_graph.return_node(starting_node)
+                # node2 = self.custom_algo.arc_flags_graph.return_node(ending_node)
+                # custom_algo_start_time = time.time()
+                # self.custom_algo.find_shortest_path(node1, node2)
+                # custom_algo_end_time = time.time()
+                # custom_algo_time = (
+                #     custom_algo_end_time - custom_algo_start_time
+                # ) * 1000
+                # Custom_algo_time_list.append(custom_algo_time)
 
             data = [
                 path_length,
@@ -261,16 +260,16 @@ class TestGraphAndDijkstra(unittest.TestCase):
                 mean(arc_flags_time_list),
                 mean(Custom_algo_time_list),
             ]
-            print(
-                header_format.format(
-                    path_length,
-                    f"{mean(dij_time_list):.3f}",
-                    f"{mean(ch_time_list):.3f}",
-                    f"{mean(astar_time_list):.3f}",
-                    f"{mean(arc_flags_time_list):.3f}",
-                    f"{mean(Custom_algo_time_list):.3f}",
-                )
+        print(
+            header_format.format(
+                path_length,
+                f"{mean(dij_time_list):.3f}",
+                f"{mean(ch_time_list):.3f}",
+                f"{mean(astar_time_list):.3f}",
+                f"{mean(arc_flags_time_list):.3f}",
+                f"{mean(Custom_algo_time_list):.3f}",
             )
+        )
 
 
 if __name__ == "__main__":
@@ -283,7 +282,7 @@ if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite)
 
-    # suite = unittest.TestSuite()
-    # suite.addTest(TestGraphAndDijkstra("test_shortest_path"))
-    # runner = unittest.TextTestRunner()
-    # runner.run(suite)
+    suite = unittest.TestSuite()
+    suite.addTest(TestGraphAndDijkstra("test_shortest_path"))
+    runner = unittest.TextTestRunner()
+    runner.run(suite)

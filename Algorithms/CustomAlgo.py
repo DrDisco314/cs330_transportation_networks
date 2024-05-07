@@ -15,10 +15,12 @@ from dijkstar import Graph as astar_graph, find_path, NoPathError
 sys.path.append("../cs330_transportation_networks")
 from src.graph import Graph, Node, Edge
 
-EMPIRICAL_HEURISTIC_CONSTANT = 1e6
+EMPIRICAL_HEURISTIC_CONSTANT = 1e10
 
 
-def arc_flag_euclidean_distance(u: Node, v: Node, graph: Graph, target_index: int) -> float:
+def arc_flag_euclidean_distance(
+    u: Node, v: Node, graph: Graph, target_index: int
+) -> float:
     """
     Calculate a heuristic cost of travelling from a current node, u, to a neighbor node, v,
     by making use of Euclidean distance and whether or not the arc flag from u to v is set.
@@ -31,21 +33,22 @@ def arc_flag_euclidean_distance(u: Node, v: Node, graph: Graph, target_index: in
     Output:
         (float) : Euclidean Distance
     """
-    # Get instance of node objects stored in the arc flags graph
-    current_node = graph.return_node(u.value)
-    neighbor = graph.return_node(v.value)
 
     # Get the edge object connecting u and v
-    node_neighbors = graph.graph[current_node]
+    node_neighbors = graph.graph[u]
     desired_neighbor_edge = node_neighbors[v]
 
     # Decentivize A* picking edges where the arc flag leading to target region is false
     # by adding a large, empirically determined constant, when arc_flag[target_index] is false
     arc_flag_heuristic = (
-        EMPIRICAL_HEURISTIC_CONSTANT if not desired_neighbor_edge.arc_flags[target_index] 
+        EMPIRICAL_HEURISTIC_CONSTANT
+        if not desired_neighbor_edge.arc_flags[target_index]
         else 0
     )
-    return math.sqrt((v.xcoord - u.xcoord) ** 2 + (v.ycoord - u.ycoord) ** 2) + arc_flag_heuristic
+    return (
+        math.sqrt((v.xcoord - u.xcoord) ** 2 + (v.ycoord - u.ycoord) ** 2)
+        + arc_flag_heuristic
+    )
 
 
 class CustomAlgo:
@@ -104,11 +107,13 @@ class CustomAlgo:
         """
         num_partitions = self.arc_flags_graph.num_partitions_axis
         target_node_region_index = end_node.region[0] + (
-                    end_node.region[1] * num_partitions
-                )
+            end_node.region[1] * num_partitions
+        )
 
         def heuristic_func(u, v, edge, prev_edge):
-            return arc_flag_euclidean_distance(u, v, self.arc_flags_graph, target_node_region_index)
+            return arc_flag_euclidean_distance(
+                u, v, self.arc_flags_graph, target_node_region_index
+            )
 
         try:
             cost_func = lambda u, v, edge, prev_edge: edge["cost"]
