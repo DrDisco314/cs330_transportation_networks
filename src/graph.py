@@ -46,7 +46,8 @@ class Edge:
         """
         Initialize the Edge Class.
         Input:
-            Weight of edge
+            weight (float) : weight of an edge
+            num_flags (int) : Number of arc flag entries to store
         Return:
             None
         """
@@ -100,7 +101,7 @@ class Graph:
         Adds the Edge from one node to another.
         Input:
             Node1 (Node) : Node representing source of Edge.
-            Node2 (int) : Node representing destination of Edge.
+            Node2 (Node) : Node representing destination of Edge.
             weight (float) : float representing weight of Edge from 2 nodes.
         Return:
             None
@@ -119,8 +120,7 @@ class Graph:
         """
         Creates partitions in coordinate space to break a graph into rectangular region
         Input:
-            graph Graph : A graph object with node keys and a dictionary as value storing other
-                Node neighbors and weight
+            None.
         Return:
             tuple[list[float], list[float]] : Defines a first and second list to mark points along
                 the x and y axes respectively as partition lines
@@ -150,13 +150,12 @@ class Graph:
         return (width_partitions, height_partitions)
 
     def get_node_region(
-        self, partitions: tuple[list[float], list[float]], node: Node
-    ) -> tuple[int, int]:
+        self, partitions: tuple[list[float], list[float]], node: Node) -> tuple[int, int]:
         """
         Returns the region that a node belongs to
         Input:
-            node Node : Node to get region of
-            paritions tuple[list[float], list[float]] : The rectangular parition points along the graph to
+            node (Node) : Node to get region of
+            paritions (tuple[list[float], list[float]]) : The rectangular parition points along the graph to
                 be compared with node's coordinates
         Return:
             tuple[int, int] : The region that the node belongs to stored as (x Region, y region) where
@@ -203,9 +202,9 @@ class Graph:
         """
         Processes the nodes in filename as Node objects
         input:
-            filanme str: String of file to process nodes from
+            filanme (str): String of file to process nodes from
         Return:
-            nodes list[Node] : List of processed nodes
+            nodes (list[Node]): List of processed nodes
         """
         nodes = {}
         try:

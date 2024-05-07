@@ -31,7 +31,7 @@ class TestGraphAndDijkstra(unittest.TestCase):
         Return:
             None
         """
-        self.name = "Dhaka"
+        self.name = "Surat"
         num = "3"
         graph_file = f"Data/{self.name}_Edgelist.csv"
         self.graph = myGraph()
@@ -316,13 +316,13 @@ class TestGraphAndDijkstra(unittest.TestCase):
 
 if __name__ == "__main__":
     # All tests:
-    # unittest.main()
+    unittest.main()
 
     # Specfic Tests:
-    suite = unittest.TestSuite()
-    suite.addTest(TestGraphAndDijkstra("test_Algorithm_time"))
-    runner = unittest.TextTestRunner()
-    runner.run(suite)
+    # suite = unittest.TestSuite()
+    # suite.addTest(TestGraphAndDijkstra("test_Algorithm_time"))
+    # runner = unittest.TextTestRunner()
+    # runner.run(suite)
 
     # suite = unittest.TestSuite()
     # suite.addTest(TestGraphAndDijkstra("test_shortest_path"))

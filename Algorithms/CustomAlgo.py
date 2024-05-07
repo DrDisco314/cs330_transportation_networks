@@ -19,8 +19,7 @@ EMPIRICAL_HEURISTIC_CONSTANT = 1e10
 
 
 def arc_flag_euclidean_distance(
-    u: Node, v: Node, graph: Graph, target_index: int
-) -> float:
+    u: Node, v: Node, graph: Graph, target_index: int) -> float:
     """
     Calculate a heuristic cost of travelling from a current node, u, to a neighbor node, v,
     by making use of Euclidean distance and whether or not the arc flag from u to v is set.
@@ -33,7 +32,6 @@ def arc_flag_euclidean_distance(
     Output:
         (float) : Euclidean Distance
     """
-
     # Get the edge object connecting u and v
     node_neighbors = graph.graph[u]
     desired_neighbor_edge = node_neighbors[v]
@@ -105,6 +103,7 @@ class CustomAlgo:
         Output:
             (PathInfo) : Dijkstar Type containing shortest path, or None.
         """
+        # Get number of partitions in graph and use to determine the arc flag index of target node
         num_partitions = self.arc_flags_graph.num_partitions_axis
         target_node_region_index = end_node.region[0] + (
             end_node.region[1] * num_partitions
@@ -115,6 +114,7 @@ class CustomAlgo:
                 u, v, self.arc_flags_graph, target_node_region_index
             )
 
+        # Run dijkstra with a cost and heuristic function - making this A*
         try:
             cost_func = lambda u, v, edge, prev_edge: edge["cost"]
             return find_path(
