@@ -1,5 +1,6 @@
 # cs330_transportation_networks
-Implements a variety of algorithms to produce quick query times for the transportation network problem.
+Implements a variety of algorithms to produce quick query times for the transportation network problem. Includes
+Brute Force Dijkstra's Algorithm, Arc Flags, Contraction Hierarchy, A*, as well as our own algorithm.
 
 # `requirements.txt`
 Use $pip install -r `requirements.txt` to install nessasary packages. 
