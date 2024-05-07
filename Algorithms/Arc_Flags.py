@@ -42,7 +42,7 @@ class ArcFlags:
         print(f"Preprocessing: {percent_finished:.0f}% done.")
         print()
 
-    def get_edge_nodes(self) -> List[Node]:
+    def get_edge_nodes(self) -> list[Node]:
         """
         Iterates through the set of nodes in the graph and returns the collection of edge nodes.
             An edge node is any node in some region R_n connected to a node in another region R_i
