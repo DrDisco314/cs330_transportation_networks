@@ -241,14 +241,13 @@ class TestGraphAndDijkstra(unittest.TestCase):
         """
 
         headers = [
-            "Path Length",
             "Dijkstar Time (ms)",
             "Contraction Hierarchies (ms)",
             "A* (ms)",
             "Arc Flags (ms)",
             "Custom Algo (ms)",
         ]
-        header_format = "{:<15} {:<20} {:<25} {:<10} {:<15} {:<15}"
+        header_format = "{:<20} {:<25} {:<10} {:<15} {:<15}"
         print("\n")
         print(header_format.format(*headers))
         dij_time_list = []
@@ -334,7 +333,6 @@ class TestGraphAndDijkstra(unittest.TestCase):
             ]
         print(
             header_format.format(
-                path_length,
                 f"{mean(dij_time_list):.3f}",
                 f"{mean(ch_time_list):.3f}",
                 f"{mean(astar_time_list):.3f}",
