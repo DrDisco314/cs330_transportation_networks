@@ -34,10 +34,10 @@ class TestGraphAndDijkstra(unittest.TestCase):
         self.name = "Surat"
         num = "3"
         graph_file = f"Data/{self.name}_Edgelist.csv"
+        graph_file_euclidean = f"Data/{self.name}_Edgelist_euclidean.csv"
         self.graph = myGraph()
         self.graph.read_from_csv_file(graph_file)
-        # self.myDijkstra = Dijkstra(self.graph)
-        graph_file_euclidean = f"Data/{self.name}_Edgelist_euclidean.csv"
+        
         self.myCH = CH(graph_file_euclidean)
 
         arc_flag_file = f"ArcFlagInstances/{self.name}_{num}_object.pkl"
@@ -89,8 +89,7 @@ class TestGraphAndDijkstra(unittest.TestCase):
         Output:
             (Float) : cost of edge between U and V.
         """
-        # print(f"edge: {edge}")
-        # print(f"{self.euclidean_distance(u, v, None, None)}")
+
         return self.euclidean_distance(u, v, None, None)
 
     def test_graph_structure(self):
@@ -186,15 +185,16 @@ class TestGraphAndDijkstra(unittest.TestCase):
                     # Confirm a path exists.
                     self.assertIsNotNone(dijkstrar_path_info)
 
-                    print(f"dijkstra: {mydijkstra}")
-                    print(f"dijkstra path length: {self.get_path_length(mydijkstra)}")
-                    print(f"ch: {ch_path_info}")
-                    print(f"ch path length: {self.get_path_length(ch_path_info)}")
-                    print(f"dijkstar: {dijkstrar_path_info}")
-                    print(f"dijkstar path length: {self.get_path_length(dijkstrar_path_info)}")
-                    print(f"A*: {astar_path_info}")
-                    print(f"A*: {self.get_path_length(astar_path_info)}")
-                    print()
+                    # print(f"dijkstra: {mydijkstra}")
+                    # print(f"dijkstra path length: {self.get_path_length(mydijkstra)}")
+                    # print(f"ch: {ch_path_info}")
+                    # print(f"ch path length: {self.get_path_length(ch_path_info)}")
+                    # print(f"dijkstar: {dijkstrar_path_info}")
+                    # print(f"dijkstar path length: {self.get_path_length(dijkstrar_path_info)}")
+                    # print(f"A*: {astar_path_info}")
+                    # print(f"A*: {self.get_path_length(astar_path_info)}")
+                    # print()
+
                     # Use multiple asserts to confirm that each path found is indentical.
                     self.assertTrue(
                         all(a == b for a, b in zip(mydijkstra, dijkstrar_path_info)),
@@ -242,12 +242,9 @@ class TestGraphAndDijkstra(unittest.TestCase):
                                 print(f"neighbors: {self.node_graph.graph[node]}")
                                 heuristic = [self.euclidean_distance(neighbor, self.node_graph.return_node(end_node), None, None) for neighbor in self.node_graph.graph[node]]
                                 cost = [self.euclidean_distance(node, neighbor, self.node_graph.graph[node][neighbor], None) for neighbor in self.node_graph.graph[node]]
-                                # print(f"neighbors euclidean distance: {[self.euclidean_distance(neighbor, self.node_graph.return_node(end_node), None, None) for neighbor in self.node_graph.graph[node]]}")
-                                # print(f"neighbors a* distance: {[self.euclidean_distance(node, neighbor, self.node_graph.graph[node][neighbor], None) for neighbor in self.node_graph.graph[node]]}")
                                 print("total cost")
                                 for i in range(len(cost)):
                                     print(heuristic[i] + cost[i])
-                            # print(f"graph: {self.graph.graph}")
                     try:
                         self.assertTrue(
                             all(
