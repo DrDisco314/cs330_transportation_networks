@@ -9,7 +9,6 @@ Citation:
 """
 
 import pandana as pdna
-import time
 import pandas as pd
 
 

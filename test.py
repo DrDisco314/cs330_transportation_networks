@@ -10,16 +10,20 @@
 
 import unittest
 import pickle
+import time
+import math
 from statistics import mean
-from dijkstar import Graph as DijkstarGraph, find_path, NoPathError
+import sys
+sys.path.append("../cs330_transportation_networks")
+
 from src.graph import Graph as myGraph
 from src.graph import Node
 from Algorithms.Dijkstra import Dijkstra, DijkstraNode
 from Algorithms.CH import CH
 from Algorithms.Arc_Flags import *
 from Algorithms.CustomAlgo import CustomAlgo
-import time
-import math
+from External.modules.dijkstar.src.dijkstar import Graph as DijkstarGraph, find_path, NoPathError
+
 
 
 class TestGraphAndDijkstra(unittest.TestCase):

@@ -8,12 +8,13 @@
 """
 
 import math
-import sys
 import pickle
-from dijkstar import Graph as astar_graph, find_path, NoPathError
-
+import sys
 sys.path.append("../cs330_transportation_networks")
-from src.graph import Graph, Node, Edge
+
+from src.graph import Graph, Node
+from External.modules.dijkstar.src.dijkstar import Graph as astar_graph, find_path, NoPathError
+
 
 EMPIRICAL_HEURISTIC_CONSTANT = 1e10
 

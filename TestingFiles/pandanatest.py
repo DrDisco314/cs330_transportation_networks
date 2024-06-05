@@ -1,17 +1,17 @@
-import pandana as pdna
 import pandas as pd
 from pandas import DataFrame
-import csv
-from pandana import Network
 import time
+import sys
+sys.path.append("../cs330_transportation_networks")
 
+from External.modules.module1.pandana import Network as pdna
 
 def load_csv(filename: str) -> DataFrame:
     df = pd.read_csv(filename)
     return df
 
 
-def create_pandanas_network(df: DataFrame) -> Network:
+def create_pandanas_network(df: DataFrame) -> pdna.Network:
     """Create 2 dataframes following format
     https://udst.github.io/pandana/index.html
     """
@@ -33,7 +33,7 @@ def create_pandanas_network(df: DataFrame) -> Network:
     return graph_network
 
 
-def find_shortest_path(net: Network):
+def find_shortest_path(net: pdna.Network):
     start_node = 1
     end_node = 204
     start = time.time()

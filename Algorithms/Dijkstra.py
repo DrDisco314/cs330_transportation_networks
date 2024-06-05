@@ -9,7 +9,6 @@
 """
 
 import heapq
-import time
 import sys
 
 sys.path.append("../cs330_transportation_networks")

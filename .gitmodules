@@ -1,0 +1,6 @@
+[submodule "External/external/module"]
+	path = External/external/module
+	url = https://github.com/wylee/Dijkstar.git
+[submodule "External/modules/dijkstar"]
+	path = External/modules/dijkstar
+	url = https://github.com/wylee/Dijkstar.git

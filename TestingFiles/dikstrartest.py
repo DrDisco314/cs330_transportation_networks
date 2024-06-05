@@ -3,7 +3,7 @@ import time
 
 sys.path.append("../cs330_transportation_networks")
 
-from dijkstar import Graph as DijkstarGraph, find_path, NoPathError
+from External.modules.dijkstar.src import Graph as DijkstarGraph, find_path, NoPathError
 from Algorithms.Dijkstra import Dijkstra
 from src.graph import Graph as myGraph
 

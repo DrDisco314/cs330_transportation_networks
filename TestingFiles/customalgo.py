@@ -4,7 +4,7 @@ import time
 sys.path.append("../cs330_transportation_networks")
 
 from Algorithms.CH import CH
-import dijkstar as dij
+from External.modules.dijkstar.src import dijkstar as dij
 
 
 def convert_pandana_to_dijkstar(pandana_network):
