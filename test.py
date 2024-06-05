@@ -331,7 +331,7 @@ class TestGraphAndDijkstra(unittest.TestCase):
             for j in range(5):
                 # Test Dijkstra
                 dij_start_time = time.time()
-                self.myDijkstra.find_shortest_path(starting_node, ending_node)
+                self.myDijkstra.find_shortest_path(self.node_graph.return_node(starting_node), self.node_graph.return_node(ending_node))
                 dij_end_time = time.time()
                 dij_time = (dij_end_time - dij_start_time) * 1000
                 dij_time_list.append(dij_time)
@@ -430,6 +430,7 @@ if __name__ == "__main__":
     # This will test only the algorithm run time. 
     suite = unittest.TestSuite()
     suite.addTest(TestGraphAndDijkstra("test_shortest_path"))
+    suite.addTest(TestGraphAndDijkstra("test_Algorithm_time"))
     runner = unittest.TextTestRunner()
     runner.run(suite)
 
