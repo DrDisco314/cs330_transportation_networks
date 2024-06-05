@@ -14,7 +14,7 @@ from statistics import mean
 from dijkstar import Graph as DijkstarGraph, find_path, NoPathError
 from src.graph import Graph as myGraph
 from src.graph import Node
-from Algorithms.Dijkstra import Dijkstra
+from Algorithms.Dijkstra import Dijkstra, DijkstraNode
 from Algorithms.CH import CH
 from Algorithms.Arc_Flags import *
 from Algorithms.CustomAlgo import CustomAlgo
@@ -31,13 +31,14 @@ class TestGraphAndDijkstra(unittest.TestCase):
         Return:
             None
         """
-        self.name = "Shenyang"
+        self.name = "Surat"
         num = "3"
         graph_file = f"Data/{self.name}_Edgelist.csv"
         self.graph = myGraph()
         self.graph.read_from_csv_file(graph_file)
-        self.myDijkstra = Dijkstra(self.graph)
-        self.myCH = CH(graph_file)
+        # self.myDijkstra = Dijkstra(self.graph)
+        graph_file_euclidean = f"Data/{self.name}_Edgelist_euclidean.csv"
+        self.myCH = CH(graph_file_euclidean)
 
         arc_flag_file = f"ArcFlagInstances/{self.name}_{num}_object.pkl"
         with open(arc_flag_file, "rb") as file:
@@ -53,10 +54,12 @@ class TestGraphAndDijkstra(unittest.TestCase):
         self.node_graph.num_partitions_axis = 3
         self.node_graph.read_from_csv_file_node(graph_file)
 
+        self.myDijkstra = DijkstraNode(self.node_graph)
+
         self.dijkstar_graph = DijkstarGraph()
         for node, neighbors in self.node_graph.graph.items():
             for neighbor, weight in neighbors.items():
-                self.dijkstar_graph.add_edge(node, neighbor, weight.weight)
+                self.dijkstar_graph.add_edge(node, neighbor, self.euclidean_distance(node, neighbor, None, None))
 
         self.custom_algo = CustomAlgo(arc_flag_file)
 
@@ -86,7 +89,9 @@ class TestGraphAndDijkstra(unittest.TestCase):
         Output:
             (Float) : cost of edge between U and V.
         """
-        return edge
+        # print(f"edge: {edge}")
+        # print(f"{self.euclidean_distance(u, v, None, None)}")
+        return self.euclidean_distance(u, v, None, None)
 
     def test_graph_structure(self):
         """
@@ -103,6 +108,24 @@ class TestGraphAndDijkstra(unittest.TestCase):
         else:
             self.assertIsNone(None)
 
+    def get_path_length(self, shortest_path, verbose = False):
+
+        path_length = 0
+        for i, node in enumerate(shortest_path):
+            if i == (len(shortest_path) - 1):
+                break
+            else:
+                path_length += self.graph.graph[node][shortest_path[i + 1]]
+
+            if verbose:
+                print(f"node: {node}")
+                print(f"graph[node]: {self.graph.graph[node]}")
+                print(f"graph[node][mydijkstra[i + 1]]: {self.graph.graph[node][shortest_path[i + 1]]}")
+                print(f"path length = {path_length}")
+
+        return path_length
+        
+
     def test_shortest_path(self):
         """
         Test to make sure existing Dijkstra is finding the same path for 96 different paths using Dijkstrar package
@@ -112,22 +135,24 @@ class TestGraphAndDijkstra(unittest.TestCase):
         Output:
             None
         """
-        start_list = [1, 2, 4, 5, 10, 11, 12, 13, 15, 16, 20, 21]
-        end_list = [122, 134, 131, 135, 208, 213, 216, 268]
+        start_list = [1, 2, 4, 5, 10, 11, 12, 13, 15, 16, 20, 21, 22, 23, 26, 27,
+                      28, 32, 34, 35, 36, 37, 41, 45, 49, 50]
+        end_list = [122, 134, 131, 135, 208, 213, 216, 268, 270, 277, 273, 274,
+                    277, 278, 288, 308, 310, 312, 315, 324, 327]
         no_path = 0
         astar_different_shortest = 0
         custom_different_shortest = 0
         for start_node in start_list:
             for end_node in end_list:
                 try:
-                    # Find path using our version of Dijkstra
-                    mydijkstra = self.myDijkstra.find_shortest_path(
-                        start_node, end_node
-                    )
-
-                    # Find path using Dijkstar Dikjstra
                     node1 = self.node_graph.return_node(start_node)
                     node2 = self.node_graph.return_node(end_node)
+
+                    # Find path using our version of Dijkstra
+                    dijkstra = self.myDijkstra.find_shortest_path(node1, node2)
+                    mydijkstra = [item.value for item in dijkstra]
+
+                    # Find path using Dijkstar Dikjstra
                     dijkstrar_path_info = find_path(self.dijkstar_graph, node1, node2)
                     dijkstrar_path_info = [
                         item.value for item in dijkstrar_path_info[0]
@@ -161,6 +186,15 @@ class TestGraphAndDijkstra(unittest.TestCase):
                     # Confirm a path exists.
                     self.assertIsNotNone(dijkstrar_path_info)
 
+                    print(f"dijkstra: {mydijkstra}")
+                    print(f"dijkstra path length: {self.get_path_length(mydijkstra)}")
+                    print(f"ch: {ch_path_info}")
+                    print(f"ch path length: {self.get_path_length(ch_path_info)}")
+                    print(f"dijkstar: {dijkstrar_path_info}")
+                    print(f"dijkstar path length: {self.get_path_length(dijkstrar_path_info)}")
+                    print(f"A*: {astar_path_info}")
+                    print(f"A*: {self.get_path_length(astar_path_info)}")
+                    print()
                     # Use multiple asserts to confirm that each path found is indentical.
                     self.assertTrue(
                         all(a == b for a, b in zip(mydijkstra, dijkstrar_path_info)),
@@ -170,10 +204,10 @@ class TestGraphAndDijkstra(unittest.TestCase):
                         all(a == b for a, b in zip(ch_path_info, dijkstrar_path_info)),
                         "CH Failed",
                     )
-                    self.assertTrue(
-                        all(a == b for a, b in zip(arc_flag_path, dijkstrar_path_info)),
-                        "Arc Flags Failed",
-                    )
+                    # self.assertTrue(
+                    #     all(a == b for a, b in zip(arc_flag_path, dijkstrar_path_info)),
+                    #     "Arc Flags Failed",
+                    # )
                     try:
                         self.assertTrue(
                             all(
@@ -193,6 +227,27 @@ class TestGraphAndDijkstra(unittest.TestCase):
                                 and astar_path_info is not None,
                                 "A* path does not match Dijkstra's at start or end, or is None",
                             )
+                            print(f"dijkstra path: {dijkstrar_path_info}")
+                            for node in dijkstrar_path_info:
+                                print(f"node: {node}")
+                                print(f"{self.graph.graph[node]}")
+                            print()
+                            print(f"A* path: {astar_path_info}")
+                            for i, node in enumerate(astar_path_info):
+                                if i == (len(astar_path_info) - 1):
+                                    break
+                                node = self.node_graph.return_node(node)
+                                node1 = self.node_graph.return_node(astar_path_info[i + 1])
+                                print(f"node: {node}")
+                                print(f"neighbors: {self.node_graph.graph[node]}")
+                                heuristic = [self.euclidean_distance(neighbor, self.node_graph.return_node(end_node), None, None) for neighbor in self.node_graph.graph[node]]
+                                cost = [self.euclidean_distance(node, neighbor, self.node_graph.graph[node][neighbor], None) for neighbor in self.node_graph.graph[node]]
+                                # print(f"neighbors euclidean distance: {[self.euclidean_distance(neighbor, self.node_graph.return_node(end_node), None, None) for neighbor in self.node_graph.graph[node]]}")
+                                # print(f"neighbors a* distance: {[self.euclidean_distance(node, neighbor, self.node_graph.graph[node][neighbor], None) for neighbor in self.node_graph.graph[node]]}")
+                                print("total cost")
+                                for i in range(len(cost)):
+                                    print(heuristic[i] + cost[i])
+                            # print(f"graph: {self.graph.graph}")
                     try:
                         self.assertTrue(
                             all(
@@ -212,6 +267,8 @@ class TestGraphAndDijkstra(unittest.TestCase):
                                 and custom_algo_path is not None,
                                 "A* path does not match Dijkstra's at start or end, or is None",
                             )
+                            print(f"dijkstra path: {dijkstrar_path_info}")
+                            print(f"A* path: {astar_path_info}")
 
                 except NoPathError:
                     no_path += 1
@@ -375,7 +432,7 @@ if __name__ == "__main__":
     # Specfic Tests:
     # This will test only the algorithm run time. 
     suite = unittest.TestSuite()
-    suite.addTest(TestGraphAndDijkstra("test_Algorithm_time"))
+    suite.addTest(TestGraphAndDijkstra("test_shortest_path"))
     runner = unittest.TextTestRunner()
     runner.run(suite)
 

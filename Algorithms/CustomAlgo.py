@@ -93,6 +93,21 @@ class CustomAlgo:
                     dijkstar_graph.add_edge(node, neighbor, {"cost": edge.weight})
 
         return dijkstar_graph
+    
+    def cost_function(self, u, v, edge, prev_edge):
+        """
+        Return the cost of the edge.
+        Inputs:
+            u (Node) : Source Node.
+            v (Node) : Neighbor Node.
+            e (any) : Current Edge.
+            prev_e (any) : previous edge.
+        Output:
+            (Float) : cost of edge between U and V.
+        """
+        # print(f"edge: {edge}")
+        # print(f"{self.euclidean_distance(u, v, None, None)}")
+        return math.sqrt((v.xcoord - u.xcoord) ** 2 + (v.ycoord - u.ycoord) ** 2)
 
     def find_shortest_path(self, start_node: Node, end_node: Node):
         """
@@ -116,12 +131,11 @@ class CustomAlgo:
 
         # Run dijkstra with a cost and heuristic function - making this A*
         try:
-            cost_func = lambda u, v, edge, prev_edge: edge["cost"]
             return find_path(
                 self.dijkstar_graph,
                 start_node,
                 end_node,
-                cost_func=cost_func,
+                cost_func=self.cost_function,
                 heuristic_func=heuristic_func,
             )
         except NoPathError:

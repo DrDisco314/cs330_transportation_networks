@@ -11,6 +11,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import csv
+import math
 
 
 class Node:
@@ -77,6 +78,21 @@ class Graph:
         self.largest_x_node = None
         self.largest_y_node = None
 
+    def euclidean_distance(self, u: Node, v: Node):
+        """
+        Calculates the Euclidean distance between 2 nodes.
+        Inputs:
+            u (Node) : Source Node.
+            v (Node) : Neighbor Node.
+            e (any) : Current Edge.
+            prev_e (any) : previous edge.
+        Output:
+            (Float) : Euclidean distance between U and V.
+        """
+        x1, y1 = u.xcoord, u.ycoord
+        x2, y2 = v.xcoord, v.ycoord
+        return math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+
     def add_edge(self, node1: int, node2: int, weight: float):
         """
         Adds the edge from one node to another.
@@ -113,8 +129,8 @@ class Graph:
 
         # Symetric Implementation. Number of partitions true for rectangular partition.
         # Add edge with memory for arc flags determined by number of regions in partition
-        self.graph[node1][node2] = Edge(weight, self.num_partitions_axis**2)
-        self.graph[node2][node1] = Edge(weight, self.num_partitions_axis**2)
+        self.graph[node1][node2] = Edge(self.euclidean_distance(node1, node2), self.num_partitions_axis**2)
+        self.graph[node2][node1] = Edge(self.euclidean_distance(node1, node2), self.num_partitions_axis**2)
 
     def rectangular_partition(self) -> tuple[list[float], list[float]]:
         """
