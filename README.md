@@ -23,7 +23,7 @@ Contains CSV files of the graph maps.
 
 ## Credits
 
-This project includes code from the following source:
+This project includes code from the following sources. They are used to validate dijkstra's algorithm, implement the A* algorithm, and CH algorithm respectively.
 
 - **[wylee]([https://github.com/wylee])**: [https://github.com/wylee/Dijkstar]
   - License: [MIT license]
