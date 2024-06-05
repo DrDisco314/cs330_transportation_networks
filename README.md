@@ -19,4 +19,18 @@ Contains all the class files for different algorithms.
 Contains pickle files of the prerprocessed arc flag graph. Can only run the custom algorithm and arc flag query with these instances. 
 
 # `Data/`
-Contains CSV files of the graph maps. 
+Contains CSV files of the graph maps.
+
+## Credits
+
+This project includes code from the following source:
+
+- **[wylee]([https://github.com/wylee])**: [https://github.com/wylee/Dijkstar]
+  - License: [MIT license]
+  - Used as a module in the project
+ 
+- **[UDST]([https://github.com/UDST]))**: [https://github.com/UDST/pandana]
+  - License: [AGPL-3.0 license]
+  - Would be used as a module but c++ error seems to prevent it
+
+The original code has been integrated into this project with permission/compliance with the original license.
